@@ -65,9 +65,11 @@ int main () {
     float PostLocation[2];
     float PostTwin[2];
     LocateInFault( loc,  InFault, GradPhi,  Phi, delta,  PostLocation);
-    float PhiPL; EvalPhi(PostLocation, &PhiPL);
+    float PhiPL; 
+    EvalPhi(PostLocation, &PhiPL);
     GetTwins( PostLocation, PhiPL, GradPhi, PostTwin);
-    float PhiTwin;EvalPhi(PostTwin, &PhiTwin);
+    float PhiTwin;
+    EvalPhi(PostTwin, &PhiTwin);
     printf( "PostLocation is %f, %f\nTwin Point Location is : %f, %f\n", PostLocation[0],PostLocation[1],PostTwin[0],PostTwin[1] );
     
     
