@@ -21,7 +21,7 @@ int main (int nargs, char *args[])
     float loc[2];
     float Phi;
     float delta;
-    bool InFault;
+    bool  InFault;
     float GradPhi[2];
     float ProjectedLoc[2];
     float TwinPoint[2];
@@ -44,7 +44,7 @@ int main (int nargs, char *args[])
     delta = 6.0;
     
     printf("Test Start \n");
-    printf("Location given is : %f, %f\n", loc[0],loc[1] );
+    printf("Location given is : %f, %f\n", loc[0], loc[1]);
 
     EvalPhi(loc, &Phi);
     printf("Signed Distance (Phi) is: %f\n", Phi);
@@ -91,37 +91,37 @@ int main (int nargs, char *args[])
 }
 
 /* Calculates Phi given a point x,y. */
-void EvalPhi(float loc[],float* phi)
+void EvalPhi(float loc[], float* phi)
 {
-    phi[0]=loc[1]-10.0; /* y - 10 */
+    phi[0] = loc[1] - 10.0; /* y - 10 */
 }
 
 /* Checks if the location is within the fault */
-void PointInFaut(float distLoc,float delta,bool *InFault)
+void PointInFaut(float distLoc, float delta, bool *InFault)
 {
     if (fabsf(distLoc) <= delta) {
-        *InFault=true;
+        *InFault = true;
     } else {
-        *InFault=false;
+        *InFault = false;
     }
 }
 
 /* Calculates GradPhi and returns an array with direction, normalized by def. */
 void NablaPhi(float GradPhi[])
 {
-    GradPhi[0]=0.0; /* as in example */
-    GradPhi[1]=1.0;
+    GradPhi[0] = 0.0; /* as in example */
+    GradPhi[1] = 1.0;
 }
 
 /* Calculates the projected point given a point */
-void GetProj(float loc[],float GradPhi[], float PhiEval, float Projected[])
+void GetProj(float loc[], float GradPhi[], float PhiEval, float Projected[])
 {
-    Projected[0]=loc[0]-GradPhi[0]*PhiEval; 
-    Projected[1]=loc[1]-GradPhi[1]*PhiEval;
+    Projected[0] = loc[0] - GradPhi[0] * PhiEval;
+    Projected[1] = loc[1] - GradPhi[1] * PhiEval;
 }
 
 /* Calculates the projected point on the +/-delta surface given a point */
-void GetProjDelta(float loc[],float GradPhi[], float PhiEval, float delta,float Projected[])
+void GetProjDelta(float loc[], float GradPhi[], float PhiEval, float delta,float Projected[])
 {
     float PhiSign, DistToDelta;
 
@@ -129,58 +129,58 @@ void GetProjDelta(float loc[],float GradPhi[], float PhiEval, float delta,float 
         DistToDelta = delta;
     } else {
         PhiSign = PhiEval/fabsf(PhiEval);
-        DistToDelta = (delta*PhiSign - PhiEval);
+        DistToDelta = (delta * PhiSign - PhiEval);
     }
     
-    Projected[0]=loc[0]+GradPhi[0]*DistToDelta; 
-    Projected[1]=loc[1]+GradPhi[1]*DistToDelta; 
+    Projected[0] = loc[0] + GradPhi[0] * DistToDelta;
+    Projected[1] = loc[1] + GradPhi[1] * DistToDelta;
 }
 
 /* Calculates the twin point given a point */
-void GetTwins(float loc[],float PhiEval,float GradPhi[],float Twin[])
+void GetTwins(float loc[], float PhiEval, float GradPhi[], float Twin[])
 {
-    Twin[0]=loc[0]-2.0*GradPhi[0]*PhiEval; 
-    Twin[1]=loc[1]-2.0*GradPhi[1]*PhiEval;
+    Twin[0] = loc[0] - 2.0 * GradPhi[0] * PhiEval;
+    Twin[1] = loc[1] - 2.0 * GradPhi[1] * PhiEval;
 }
 
 /* Calculate tangent vector */
-void TangentVect(float GradPhi[],float TanDir[])
+void TangentVect(float GradPhi[], float TanDir[])
 {
-    TanDir[0]=GradPhi[1]; 
-    TanDir[1]=-GradPhi[0];
+    TanDir[0] =  GradPhi[1];
+    TanDir[1] = -GradPhi[0];
 }
 
 /* Calculate tangent velocity */
-void TangentVel(float Velocity[],float TanVect[],float TanVel[])
+void TangentVel(float Velocity[], float TanVect[], float TanVel[])
 {
     float VecDotVel;
 
-    VecDotVel=Velocity[0]*TanVect[0]+Velocity[1]*TanVect[1];
+    VecDotVel = Velocity[0] * TanVect[0] + Velocity[1] * TanVect[1];
 
-    TanVel[0]=VecDotVel*TanVect[0]; 
-    TanVel[1]=VecDotVel*TanVect[1];
+    TanVel[0] = VecDotVel * TanVect[0];
+    TanVel[1] = VecDotVel * TanVect[1];
 }
 
 /* Evaluate velocity */
-void EvalVelocity(float PhiEval,float Velocity[])
+void EvalVelocity(float PhiEval, float Velocity[])
 {
     if (PhiEval < 0) {
-        Velocity[0]=3.0;
-        Velocity[1]=1.0;
+        Velocity[0] = 3.0;
+        Velocity[1] = 1.0;
     } else if (PhiEval > 0) {
-        Velocity[0]=-3.0;
-        Velocity[1]=1.0;
+        Velocity[0] = -3.0;
+        Velocity[1] =  1.0;
     } else {
-        Velocity[0]=0.0;
-        Velocity[1]=1.0;
+        Velocity[0] = 0.0;
+        Velocity[1] = 1.0;
     }
 }
 
 /* Calculates the twin point given a point */
-void LocateInFault(float loc[], bool LocInFault,float GradPhi[], float PhiEval,float delta, float PostLocation[])
+void LocateInFault(float loc[], bool LocInFault, float GradPhi[], float PhiEval, float delta, float PostLocation[])
 {
     if (LocInFault) {
-        GetProjDelta(loc,GradPhi, PhiEval, delta,PostLocation); 
+        GetProjDelta(loc, GradPhi, PhiEval, delta, PostLocation);
     } else {
         PostLocation[0] = loc[0];
         PostLocation[1] = loc[1];
@@ -188,22 +188,22 @@ void LocateInFault(float loc[], bool LocInFault,float GradPhi[], float PhiEval,f
 }
 
 /* Calculate slip rate for a location */
-void CalcSlipRate(float VelPlus[], float VelMinus[],float PhiPlus,float PhiMinus,  bool LocInFault,float SlipRate[])
+void CalcSlipRate(float VelPlus[], float VelMinus[], float PhiPlus, float PhiMinus, bool LocInFault, float SlipRate[])
 {
     if (LocInFault) {
         if (PhiPlus > PhiMinus) {
-            SlipRate[0]=VelPlus[0]-VelMinus[0];
-            SlipRate[1]=VelPlus[1]-VelMinus[1];
+            SlipRate[0] = VelPlus[0] - VelMinus[0];
+            SlipRate[1] = VelPlus[1] - VelMinus[1];
         } else if (PhiPlus < PhiMinus) {
-            SlipRate[0]=VelMinus[0]-VelPlus[0];
-            SlipRate[1]=VelMinus[1]-VelPlus[1];
+            SlipRate[0] = VelMinus[0] - VelPlus[0];
+            SlipRate[1] = VelMinus[1] - VelPlus[1];
         } else {
-            SlipRate[0]=0.0;
-            SlipRate[1]=0.0;
+            SlipRate[0] = 0.0;
+            SlipRate[1] = 0.0;
         }   
     } else {
-        SlipRate[0]=0.0;
-        SlipRate[1]=0.0;
+        SlipRate[0] = 0.0;
+        SlipRate[1] = 0.0;
     }
 }
 
