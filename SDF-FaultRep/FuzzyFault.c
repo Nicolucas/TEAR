@@ -199,6 +199,7 @@ void CalcSlipRate(float VelPlus[], float VelMinus[], float PhiPlus, float PhiMin
         } else if (PhiPlus < PhiMinus) {
             SlipRate[0] = VelMinus[0] - VelPlus[0];
             SlipRate[1] = VelMinus[1] - VelPlus[1];
+        }
     }
 }
 
