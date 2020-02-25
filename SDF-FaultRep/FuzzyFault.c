@@ -39,7 +39,7 @@ int main () {
 
     EvalPhi(loc, &Phi);
     printf( "Signed Distance (Phi) is: %f\n", Phi );
-    printf( "Distance (|Phi|) is: %f\n", fabs(Phi) );
+    printf( "Distance (|Phi|) is: %f\n", fabsf(Phi) );
 
     PointInFaut(Phi, delta, &InFault);
     printf("Is point in the fault? %s\n",InFault ? "true": "false");
@@ -96,7 +96,7 @@ void EvalPhi(float loc[],float* phi) {
 
 /*Checks if the location is within the fault*/
 void PointInFaut(float distLoc,float delta,bool *InFault){
-    if(fabs(distLoc) <= delta){
+    if(fabsf(distLoc) <= delta){
         InFault[0]=true;
     }
     else{
@@ -124,7 +124,7 @@ void GetProjDelta(float loc[],float GradPhi[], float PhiEval, float delta,float 
         DistToDelta = delta;
     }
     else{
-        PhiSign = PhiEval/fabs(PhiEval);
+        PhiSign = PhiEval/fabsf(PhiEval);
         DistToDelta = (delta*PhiSign - PhiEval);
     }
     
