@@ -84,7 +84,7 @@ int main () {
     TangentVect( GradPhi, TanDirTwo);
     TangentVel(VelocityTwo, TanDirTwo, VelTanTwo);
 
-    CalcSlipRate(VelTanOne, VelTanTwo, PhiPL, PhiTwin, SlipRate);
+    CalcSlipRate(VelTanOne, VelTanTwo, PhiPL, PhiTwin, InFault, SlipRate);
     printf( "Slip Rate is : %f, %f\n", SlipRate[0],SlipRate[1] );
     return 0;
 }
