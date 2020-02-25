@@ -120,7 +120,7 @@ void GetProj(float loc[],float GradPhi[], float PhiEval, float Projected[]) {
 void GetProjDelta(float loc[],float GradPhi[], float PhiEval, float delta,float Projected[]) {
     float PhiSign, DistToDelta;
 
-    if (PhiEval==0){
+    if (fabsf(PhiEval) < 1.0e-12){
         DistToDelta = delta;
     }
     else{
