@@ -47,11 +47,11 @@ int main (int nargs, char *args[])
     printf("Location given is : %f, %f\n", loc[0], loc[1]);
 
     EvalPhi(loc, &Phi);
-    printf("Signed Distance (Phi) is: %f\n", Phi);
-    printf("Distance (|Phi|) is: %f\n", fabsf(Phi));
+    printf("Signed distance (Phi) is : %f\n", Phi);
+    printf("Distance (|Phi|) is : %f\n", fabsf(Phi));
 
     PointInFaut(Phi, delta, &InFault);
-    printf("Is point in the fault? %s\n", InFault ? "true": "false");
+    printf("Is point in the fault? : %s\n", InFault ? "true": "false");
 
     NablaPhi(GradPhi);
     printf("GradPhi direction is : %f, %f\n", GradPhi[0], GradPhi[1]);
@@ -60,14 +60,14 @@ int main (int nargs, char *args[])
     printf("Projected location is : %f, %f\n", ProjectedLoc[0], ProjectedLoc[1]);
 
     GetTwins(loc, Phi, GradPhi, TwinPoint);
-    printf("Twin Point Location is : %f, %f\n", TwinPoint[0], TwinPoint[1]);
+    printf("Twin point location is : %f, %f\n", TwinPoint[0], TwinPoint[1]);
 
     TangentVect(GradPhi, TanDir);
     printf("Tangent direction is : %f, %f\n", TanDir[0], TanDir[1]);
 
     EvalVelocity(Phi, Velocity);
     TangentVel(Velocity, TanDir, tVel);
-    printf("Tangent Velocity is : %f, %f\n", tVel[0], tVel[1]);
+    printf("Tangent velocity is : %f, %f\n", tVel[0], tVel[1]);
 
 
     printf("-----------------------------------------\n");
@@ -75,7 +75,8 @@ int main (int nargs, char *args[])
     EvalPhi(PostLocation, &PhiPL);
     GetTwins(PostLocation, PhiPL, GradPhi, PostTwin);
     EvalPhi(PostTwin, &PhiTwin);
-    printf("PostLocation is %f, %f\nTwin Point Location is : %f, %f\n", PostLocation[0], PostLocation[1],PostTwin[0], PostTwin[1]);
+    printf("Projected fault coordinate (post) : %f, %f\n", PostLocation[0], PostLocation[1]);
+    printf("Projected fault coordinate (twin) : %f, %f\n", PostTwin[0], PostTwin[1]);
 
     EvalVelocity(PhiPL, VelocityOne);
     TangentVect(GradPhi, TanDirOne);
@@ -86,7 +87,7 @@ int main (int nargs, char *args[])
     TangentVel(VelocityTwo, TanDirTwo, VelTanTwo);
 
     CalcSlipRate(VelTanOne, VelTanTwo, PhiPL, PhiTwin, InFault, SlipRate);
-    printf("Slip Rate is : %f, %f\n", SlipRate[0], SlipRate[1]);
+    printf("Slip rate is : %f, %f\n", SlipRate[0], SlipRate[1]);
     return(0);
 }
 
