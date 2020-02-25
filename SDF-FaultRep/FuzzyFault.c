@@ -97,10 +97,10 @@ void EvalPhi(float loc[],float* phi) {
 /*Checks if the location is within the fault*/
 void PointInFaut(float distLoc,float delta,bool *InFault){
     if(fabsf(distLoc) <= delta){
-        InFault[0]=true;
+        *InFault=true;
     }
     else{
-        InFault[0]=false;
+        *InFault=false;
     }
 }
 
