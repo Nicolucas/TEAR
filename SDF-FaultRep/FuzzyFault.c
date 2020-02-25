@@ -44,49 +44,49 @@ int main (int nargs, char *args[])
     delta = 6.0;
     
     printf("Test Start \n");
-    printf( "Location given is : %f, %f\n", loc[0],loc[1] );
+    printf("Location given is : %f, %f\n", loc[0],loc[1] );
 
     EvalPhi(loc, &Phi);
-    printf( "Signed Distance (Phi) is: %f\n", Phi );
-    printf( "Distance (|Phi|) is: %f\n", fabsf(Phi) );
+    printf("Signed Distance (Phi) is: %f\n", Phi);
+    printf("Distance (|Phi|) is: %f\n", fabsf(Phi));
 
     PointInFaut(Phi, delta, &InFault);
-    printf("Is point in the fault? %s\n",InFault ? "true": "false");
+    printf("Is point in the fault? %s\n", InFault ? "true": "false");
 
     NablaPhi(GradPhi);
-    printf( "GradPhi direction is : %f, %f\n", GradPhi[0],GradPhi[1] );
+    printf("GradPhi direction is : %f, %f\n", GradPhi[0], GradPhi[1]);
 
-    GetProj( loc, GradPhi, Phi, ProjectedLoc);
-    printf( "Projected location is : %f, %f\n", ProjectedLoc[0],ProjectedLoc[1] );
+    GetProj(loc, GradPhi, Phi, ProjectedLoc);
+    printf("Projected location is : %f, %f\n", ProjectedLoc[0], ProjectedLoc[1]);
 
-    GetTwins( loc, Phi, GradPhi, TwinPoint);
-    printf( "Twin Point Location is : %f, %f\n", TwinPoint[0],TwinPoint[1] );
+    GetTwins(loc, Phi, GradPhi, TwinPoint);
+    printf("Twin Point Location is : %f, %f\n", TwinPoint[0], TwinPoint[1]);
 
-    TangentVect( GradPhi, TanDir);
-    printf( "Tangent direction is : %f, %f\n", TanDir[0],TanDir[1] );
+    TangentVect(GradPhi, TanDir);
+    printf("Tangent direction is : %f, %f\n", TanDir[0], TanDir[1]);
 
-    EvalVelocity( Phi, Velocity);
+    EvalVelocity(Phi, Velocity);
     TangentVel(Velocity, TanDir, tVel);
-    printf( "Tangent Velocity is : %f, %f\n", tVel[0],tVel[1] );
+    printf("Tangent Velocity is : %f, %f\n", tVel[0], tVel[1]);
 
 
     printf("-----------------------------------------\n");
-    LocateInFault( loc,  InFault, GradPhi,  Phi, delta,  PostLocation);
+    LocateInFault(loc, InFault, GradPhi, Phi, delta, PostLocation);
     EvalPhi(PostLocation, &PhiPL);
-    GetTwins( PostLocation, PhiPL, GradPhi, PostTwin);
+    GetTwins(PostLocation, PhiPL, GradPhi, PostTwin);
     EvalPhi(PostTwin, &PhiTwin);
-    printf( "PostLocation is %f, %f\nTwin Point Location is : %f, %f\n", PostLocation[0],PostLocation[1],PostTwin[0],PostTwin[1] );
+    printf("PostLocation is %f, %f\nTwin Point Location is : %f, %f\n", PostLocation[0], PostLocation[1],PostTwin[0], PostTwin[1]);
 
-    EvalVelocity( PhiPL, VelocityOne);
-    TangentVect( GradPhi, TanDirOne);
+    EvalVelocity(PhiPL, VelocityOne);
+    TangentVect(GradPhi, TanDirOne);
     TangentVel(VelocityOne, TanDirOne, VelTanOne);
 
-    EvalVelocity( PhiTwin, VelocityTwo);
-    TangentVect( GradPhi, TanDirTwo);
+    EvalVelocity(PhiTwin, VelocityTwo);
+    TangentVect(GradPhi, TanDirTwo);
     TangentVel(VelocityTwo, TanDirTwo, VelTanTwo);
 
     CalcSlipRate(VelTanOne, VelTanTwo, PhiPL, PhiTwin, InFault, SlipRate);
-    printf( "Slip Rate is : %f, %f\n", SlipRate[0],SlipRate[1] );
+    printf("Slip Rate is : %f, %f\n", SlipRate[0], SlipRate[1]);
     return(0);
 }
 
@@ -194,7 +194,7 @@ void CalcSlipRate(float VelPlus[], float VelMinus[],float PhiPlus,float PhiMinus
         if (PhiPlus > PhiMinus) {
             SlipRate[0]=VelPlus[0]-VelMinus[0];
             SlipRate[1]=VelPlus[1]-VelMinus[1];
-        } else if(PhiPlus < PhiMinus) {
+        } else if (PhiPlus < PhiMinus) {
             SlipRate[0]=VelMinus[0]-VelPlus[0];
             SlipRate[1]=VelMinus[1]-VelPlus[1];
         } else {
