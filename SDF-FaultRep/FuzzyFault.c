@@ -190,6 +190,8 @@ void LocateInFault(float loc[], bool LocInFault, float GradPhi[], float PhiEval,
 /* Calculate slip rate for a location */
 void CalcSlipRate(float VelPlus[], float VelMinus[], float PhiPlus, float PhiMinus, bool LocInFault, float SlipRate[])
 {
+    SlipRate[0] = 0.0;
+    SlipRate[1] = 0.0;
     if (LocInFault) {
         if (PhiPlus > PhiMinus) {
             SlipRate[0] = VelPlus[0] - VelMinus[0];
@@ -197,13 +199,6 @@ void CalcSlipRate(float VelPlus[], float VelMinus[], float PhiPlus, float PhiMin
         } else if (PhiPlus < PhiMinus) {
             SlipRate[0] = VelMinus[0] - VelPlus[0];
             SlipRate[1] = VelMinus[1] - VelPlus[1];
-        } else {
-            SlipRate[0] = 0.0;
-            SlipRate[1] = 0.0;
-        }   
-    } else {
-        SlipRate[0] = 0.0;
-        SlipRate[1] = 0.0;
     }
 }
 
