@@ -31,6 +31,14 @@ int main (int nargs, char *args[])
     float tVel[2];
     float SlipRate[2];
 
+    float PostLocation[2];
+    float PostTwin[2];
+    float PhiPL;
+    float PhiTwin;
+    float VelocityOne[2], VelTanOne[2], TanDirOne[2];
+    float VelocityTwo[2], VelTanTwo[2], TanDirTwo[2];
+
+  
     loc[0] = 4.0;
     loc[1] = 5.0;
     delta = 6.0;
@@ -63,24 +71,16 @@ int main (int nargs, char *args[])
 
 
     printf("-----------------------------------------\n");
-    float PostLocation[2];
-    float PostTwin[2];
     LocateInFault( loc,  InFault, GradPhi,  Phi, delta,  PostLocation);
-    float PhiPL; 
     EvalPhi(PostLocation, &PhiPL);
     GetTwins( PostLocation, PhiPL, GradPhi, PostTwin);
-    float PhiTwin;
     EvalPhi(PostTwin, &PhiTwin);
     printf( "PostLocation is %f, %f\nTwin Point Location is : %f, %f\n", PostLocation[0],PostLocation[1],PostTwin[0],PostTwin[1] );
-    
-    
 
-    float VelocityOne[2], VelTanOne[2], TanDirOne[2];
     EvalVelocity( PhiPL, VelocityOne);
     TangentVect( GradPhi, TanDirOne);
     TangentVel(VelocityOne, TanDirOne, VelTanOne);
 
-    float VelocityTwo[2], VelTanTwo[2], TanDirTwo[2];
     EvalVelocity( PhiTwin, VelocityTwo);
     TangentVect( GradPhi, TanDirTwo);
     TangentVel(VelocityTwo, TanDirTwo, VelTanTwo);
