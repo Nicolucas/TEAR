@@ -1,5 +1,5 @@
 /**
- * Different sets of friction laws
+ * Different sets of friction laws UNTESTED
  */
 
 #include <stdio.h>
@@ -7,9 +7,6 @@
 #include <math.h>
 
 
-/**
- * Univariate Relationships
-*/
 
 /**
  * Static/Dynamic Friction:
@@ -17,7 +14,8 @@
  * The proportionality constant is \mu. 
  * Unphysical instantaneous stress change from peak value to the sliding value.
 */
-void StaticDynamic(float Tau[],float mu, float sigma[]){
+void StaticDynamic(float Tau[], float sigma[], float mu)
+{
     Tau[0]=mu*sigma[0];
 }
 /**
@@ -26,28 +24,79 @@ void StaticDynamic(float Tau[],float mu, float sigma[]){
  * beyond which a constant stress is prescribed.
  * Max(\tau_d | \tau_p - d_c S)
 */
-void SlipWeakening(float Tau[], float tau_d,float tau_p,float d_c,float Slip[]){
+void SlipWeakening(float Tau[], float tau_d,float tau_p,float D_c,float Slip[])
+{
     float DecreasingStress;
 
-    DecreasingStress = tau_p - d_c * Slip[0]; 
-    if (DecreasingStress > tau_d){
-        Tau[0]=DecreasingStress;
-    }
-    else
+    DecreasingStress = tau_p - D_c * Slip[0]; 
+    if (DecreasingStress > tau_d)
     {
+        Tau[0]=DecreasingStress;
+    } else {
         Tau[0]=tau_d;
     }
-    
 
-    
 }
 
 /**
- *  Rate and State Friction (Dieterich-Ruina)
+ * Rate and State friction (Dieterich-Ruina)
  * Captures steady state velocity dependence and transient slip and time dependence.
- * Defined in terms of 
+ * \tau = \sigma_n * (\mu_o + a * ln(V / V_o) + b * ln(V_o * \theta / D_c));
+*/ 
+void RateStateFriction(float Tau[], float sigma_n[], float V, float Theta, float ListOfParameters[])
+{
+    // Unpacking ListOfParameters = [a, b, mu_o, V_o, D_c]
+    float a = ListOfParameters[0];
+    float b = ListOfParameters[1];
+    float mu_o = ListOfParameters[2]; // Ref. friction coefficient
+    float V_o = ListOfParameters[3]; //Ref. slip Velocity
+    float D_c = ListOfParameters[4]; //Length scale
+
+    Tau[0] = sigma_n[0] * (mu_o + a * logf(V / V_o) + b * log(V_o * Theta / D_c));
+}
+
+/**
+ * Modified Rate and State friction law
+ * Captures steady state velocity dependence and transient slip and time dependence.
+ * \tau = \sigma_n * a * asinh(( V / (2.0 * V_o)) * exp((\mu_o + b * ln(V_o * \theta / D_c)) / a))
 */ 
 
-void RateStateFriction(){
+void ModRateStateFriction(float Tau[], float sigma_n[], float V, float Theta, float ListOfParameters[])
+{
+    // Unpacking ListOfParameters = [a, b, mu_o, V_o, D_c]
+    float a = ListOfParameters[0];
+    float b = ListOfParameters[1];
+    float mu_o = ListOfParameters[2]; // Ref. friction coefficient
+    float V_o = ListOfParameters[3]; //Ref. slip Velocity
+    float D_c = ListOfParameters[4]; //Length scale
 
+    Tau[0] = sigma_n[0] * a * asinhf(( V / (2.0 * V_o)) * expf((mu_o + b * log(V_o * Theta / D_c)) / a));
+}
+
+
+/**
+ * Evolution Effect
+*/
+
+/**
+ * Aging law
+ * \Dot{\theta} = 1 - (\Dot{S} / L) \theta 
+ * --> 
+ * \theta(\theta_o, \Dot{S}, t) = C * exp(-\Dot{S} * t / L) + L / \Dot{S}
+ * 
+*/
+void DotState_AgingLaw(float Sdot, float ListOfParameters[], float* Theta, float* ThetaDot)
+{
+    float D_c = ListOfParameters[4]; //Length scale
+
+    ThetaDot[0] = Theta[0] * Sdot / D_c ; 
+}
+
+void State_AgingLaw(float theta_o, float Sdot, float ListOfParameters[], float time,float* Theta)
+{
+    float D_c = ListOfParameters[4]; //Length scale
+    float C;
+
+    C = theta_o - D_c / Sdot;
+    Theta[0] = C * expf(-Sdot * time / D_c) + D_c / Sdot;  // Actually this only would be the case if Sdot was constant
 }
