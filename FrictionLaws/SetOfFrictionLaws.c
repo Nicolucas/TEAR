@@ -1,11 +1,10 @@
-/**
- * Different sets of friction laws UNTESTED
- */
-
 #include <stdio.h>
 #include <stdbool.h>
 #include <math.h>
 
+/**
+ * Different sets of friction laws UNTESTED
+ */
 
 
 /**
@@ -47,11 +46,11 @@ void SlipWeakening(float Tau[], float sigma_n[], float mu_s, float mu_d, float D
 void RateStateFriction(float Tau[], float sigma_n[], float V, float Theta, float ListOfParameters[])
 {
     // Unpacking ListOfParameters = [a, b, mu_o, V_o, D_c]
-    float a = ListOfParameters[0];
-    float b = ListOfParameters[1];
+    float a = ListOfParameters[0]; // Direct effect coefficient
+    float b = ListOfParameters[1]; // Evolution effect coefficient
     float mu_o = ListOfParameters[2]; // Ref. friction coefficient
-    float V_o = ListOfParameters[3]; //Ref. slip Velocity
-    float D_c = ListOfParameters[4]; //Length scale
+    float V_o = ListOfParameters[3]; // Ref. slip Velocity
+    float D_c = ListOfParameters[4]; // Length scale
 
     Tau[0] = sigma_n[0] * (mu_o + a * logf(V / V_o) + b * log(V_o * Theta / D_c));
 }
@@ -77,16 +76,35 @@ void ModRateStateFriction(float Tau[], float sigma_n[], float V, float Theta, fl
 
 
 /**
- * Evolution Effect
+ * State Evolution
 */
 
 /**
  * Aging law
  * \Dot{\theta} = 1 - (\Dot{S} / L) \theta 
+ * --> 
+ * \theta(\theta_o, \Dot{S}, t) = C * exp(-\Dot{S} * t / L) + L / \Dot{S}
 */
 void DotState_AgingLaw(float ListOfParameters[], float Sdot, float* Theta, float* ThetaDot)
 {
     float D_c = ListOfParameters[4]; //Length scale
 
     ThetaDot[0] = Theta[0] * Sdot / D_c ; 
+}
+
+void State_AgingLaw(float theta_o, float Sdot, float ListOfParameters[], float time,float* Theta)
+{
+    float D_c = ListOfParameters[4]; //Length scale
+    float C;
+
+    C = theta_o - D_c / Sdot;
+    Theta[0] = C * expf(-Sdot * time / D_c) + D_c / Sdot;  // Actually this only would be the case if Sdot was constant
+} 
+
+
+/**
+ * Interface condition
+*/
+void InterfaceCondition(float mu, float rho, float* C_s, float* Traction, float* Sdot)
+{
 }
