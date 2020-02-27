@@ -81,22 +81,10 @@ void ModRateStateFriction(float Tau[], float sigma_n[], float V, float Theta, fl
 /**
  * Aging law
  * \Dot{\theta} = 1 - (\Dot{S} / L) \theta 
- * --> 
- * \theta(\theta_o, \Dot{S}, t) = C * exp(-\Dot{S} * t / L) + L / \Dot{S}
- * 
 */
-void DotState_AgingLaw(float Sdot, float ListOfParameters[], float* Theta, float* ThetaDot)
+void DotState_AgingLaw(float ListOfParameters[], float Sdot, float* Theta, float* ThetaDot)
 {
     float D_c = ListOfParameters[4]; //Length scale
 
     ThetaDot[0] = Theta[0] * Sdot / D_c ; 
-}
-
-void State_AgingLaw(float theta_o, float Sdot, float ListOfParameters[], float time,float* Theta)
-{
-    float D_c = ListOfParameters[4]; //Length scale
-    float C;
-
-    C = theta_o - D_c / Sdot;
-    Theta[0] = C * expf(-Sdot * time / D_c) + D_c / Sdot;  // Actually this only would be the case if Sdot was constant
 }
