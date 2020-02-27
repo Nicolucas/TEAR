@@ -20,26 +20,27 @@ void StaticDynamic(float Tau[], float sigma[], float mu)
 }
 /**
  * Slip-Weakening (SW)
+ * 
  * Shear stress is a decreasing function of slip S up to some distance d_c, 
  * beyond which a constant stress is prescribed.
- * Max(\tau_d | \tau_p - d_c S)
+ * Linear Slip Weakening in the form introduced by Andrews (1976):
+ * if s < D_c: Tau = \sigma_n * (\mu_s - (\mu_s - \mu_d) * s / D_c) 
+ * Otherwise:  Tau = \sigma_n * \mu_d 
 */
-void SlipWeakening(float Tau[], float tau_d,float tau_p,float D_c,float Slip[])
+void SlipWeakening(float Tau[], float sigma_n[], float mu_s, float mu_d, float D_c,float Slip[])
 {
-    float DecreasingStress;
-
-    DecreasingStress = tau_p - D_c * Slip[0]; 
-    if (DecreasingStress > tau_d)
+    if (Slip[0] < D_c)
     {
-        Tau[0]=DecreasingStress;
+        Tau[0] = sigma_n[0] * (mu_s - (mu_s - mu_d) * Slip[0] / D_c);
     } else {
-        Tau[0]=tau_d;
+        Tau[0] = sigma_n[0] * mu_d;
     }
 
 }
 
 /**
  * Rate and State friction (Dieterich-Ruina)
+ * 
  * Captures steady state velocity dependence and transient slip and time dependence.
  * \tau = \sigma_n * (\mu_o + a * ln(V / V_o) + b * ln(V_o * \theta / D_c));
 */ 
@@ -57,6 +58,7 @@ void RateStateFriction(float Tau[], float sigma_n[], float V, float Theta, float
 
 /**
  * Modified Rate and State friction law
+ * 
  * Captures steady state velocity dependence and transient slip and time dependence.
  * \tau = \sigma_n * a * asinh(( V / (2.0 * V_o)) * exp((\mu_o + b * ln(V_o * \theta / D_c)) / a))
 */ 
