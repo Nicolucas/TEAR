@@ -72,7 +72,7 @@ void EvalRateStateFriction(float Tau[], float sigma_n[], float Sdot, float Theta
 {
     float Fric;
     FricRS(&Fric, Sdot, Theta, ListOfParameters);
-    Tau[0] = sigma_n[0] * Fric);
+    Tau[0] = sigma_n[0] * Fric;
 }
 
 /**
