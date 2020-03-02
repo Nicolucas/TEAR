@@ -3,7 +3,7 @@
 #include <math.h>
 
 /**
- * Different sets of friction laws UNTESTED
+ * Different sets of friction laws
  */
 
 /**
@@ -16,7 +16,7 @@ void FricSD(float* Fric, float mu)
 {
     Fric[0] = mu;
 }
-void EvalStaticDynamic(float *Tau, float sigma[], float mu)
+void EvalStaticDynamic(float Tau[], float sigma[], float mu)
 {
     float Fric;
     FricSD(&Fric, mu);
