@@ -6,7 +6,6 @@
  * Different sets of friction laws UNTESTED
  */
 
-
 /**
  * Static/Dynamic Friction:
  * The Shear stress \tau = \sigma\mu is proportional to the normal stress \sigma.
@@ -17,7 +16,7 @@ void FricSD(float* Fric, float mu)
 {
     Fric[0] = mu;
 }
-void EvalStaticDynamic(float Tau[], float sigma[], float mu)
+void EvalStaticDynamic(float *Tau, float sigma[], float mu)
 {
     float Fric;
     FricSD(&Fric, mu);
@@ -34,7 +33,7 @@ void EvalStaticDynamic(float Tau[], float sigma[], float mu)
  * Otherwise:  Tau = \sigma_n * \mu_d 
 */
 
-void FricSW(float *Fric, float mu_s, float mu_d, float D_c,float Slip[])
+void FricSW(float *Fric, float mu_s, float mu_d, float D_c, float *Slip)
 {
     if (Slip[0] < D_c)
     {
@@ -66,7 +65,7 @@ void FricRS(float *Fric, float Sdot, float Theta, float ListOfParameters[])
     float V_o = ListOfParameters[3]; // Ref. slip Velocity
     float D_c = ListOfParameters[4]; // Length scale
 
-    Fric[0] = mu_o + a * logf(Sdot / V_o) + b * log(V_o * Theta / D_c);
+    Fric[0] = mu_o + a * logf(Sdot / V_o) + b * log((V_o * Theta) / D_c);
 }
 void EvalRateStateFriction(float Tau[], float sigma_n[], float Sdot, float Theta, float ListOfParameters[])
 {

@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "setoffrictionlaws.h": "c",
+        "stdbool.h": "c"
+    }
+}
