@@ -24,7 +24,7 @@ int main () {
     float DeltaSlip = 0.0002;
      
 
-    float ListOfParameters[5] = {0.011, 0.007, 0.2, DeltaSlip/(2.0*DeltaTime), D_c};
+    float ListOfParameters[5] = {0.011, 0.016, 0.2, DeltaSlip/(2.0*DeltaTime), D_c};
     
     float Theta, theta_oo, theta_o;
     
