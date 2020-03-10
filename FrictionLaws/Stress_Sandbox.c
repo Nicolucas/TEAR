@@ -1,29 +1,58 @@
 #include <stdio.h>
 #include "SetOfFrictionLaws.c"
 
-/**
- * Rotate the stress tensor:
- * \sigma' = R \sigma R^T
- * And rotate back
- * \sigma = R^T \sigma' R
- * 
- * R = (n_T n)
- * where n_T and n are the orthonormal basis of the local coordinates of the fault
- * Thus we get the local stress tensor and think of the 
- * parallel and normal vector as (1 0) and (0 1)
- * 
- * Remember to remember that the stress tensor is expressed in Voigt Notation
-*/
 
-void CanToLocRot(float n_T[], float n[]) {
-    float CanToLoc[2][2]={n_T[0], n[0], n_T[1], n[1]};
-    float CanToLoc_T[2][2]={n_T[0], n_T[1], n[0], n[1]};
+void PartialUpScalar(float ScalarIn, float ScalarHalf, float TimeStep, float ScalarDot)
+{
+    ScalarHalf = ScalarIn + 0.5*TimeStep*ScalarDot;
 }
 
-void CalcSigmaSG(float Sigma[], float Sdot, float Theta, float ListOfParameters[]){
+void PartialUpVector(float VectIn[], float VectHalf[], float TimeStep, float VectDot[])
+{
+    VectHalf[0] = VectIn[0] + 0.5*TimeStep*VectDot[0];
+    VectHalf[1] = VectIn[1] + 0.5*TimeStep*VectDot[1];
+}
+
+void CalcSigmaComponent(float Sigma[],float n_i[], float n_j[], float *SigmaScalar)
+{
+    SigmaScalar[0] = Sigma[0]*n_i[0]*n_j[0] + Sigma[1]*n_i[1]*n_j[1] + Sigma[2]*n_i[1]*n_j[0] + Sigma[2]*n_i[0]*n_j[1];
+}
+
+void CompTauCritic(float Sigma[], float Sdot, float Theta, float ListOfParameters[], float n[], float *TauC)
+{
     float Fric;
+    float SigmaN;
 
     FricRS(&Fric, Sdot, Theta, ListOfParameters);
+    CalcSigmaComponent(Sigma, n, n, &SigmaN);
+
+    TauC[0] = SigmaN * Fric;
+
+}
+
+void GetFaultTraction(float Sigma[],float n_T[], float n[], float TauC, float *Traction, bool *UpStress)
+{
+    CalcSigmaComponent(Sigma, n_T, n, &Traction);
+    UpStress[0] = false; 
+
+    if (Traction[0] > TauC)
+    {
+        UpStress[0] = true;
+    }  
+}
+
+void GetSlipFromTraction(float delta, float G, bool UpStress, float Traction, float TauC, float OldSlip, float *NewSlip)
+{
+
+    if (UpStress)
+    {
+        NewSlip[0] = OldSlip + (Traction - TauC) * delta / G;
+    } 
+    else
+    {
+        NewSlip[0] = OldSlip;
+    } 
+    } 
 }
 
 

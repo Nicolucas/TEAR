@@ -124,17 +124,10 @@ void GetProj(float loc[], float GradPhi[], float PhiEval, float Projected[])
 /* Calculates the projected point on the +/-delta surface given a point */
 void GetProjDelta(float loc[], float GradPhi[], float PhiEval, float delta,float Projected[])
 {
-    float PhiSign, DistToDelta;
+    GetProj(loc, GradPhi, PhiEval, &Projected);
 
-    if (fabsf(PhiEval) < 1.0e-12) {
-        DistToDelta = delta;
-    } else {
-        PhiSign = PhiEval/fabsf(PhiEval);
-        DistToDelta = (delta * PhiSign - PhiEval);
-    }
-    
-    Projected[0] = loc[0] + GradPhi[0] * DistToDelta;
-    Projected[1] = loc[1] + GradPhi[1] * DistToDelta;
+    Projected[0] = Projected[0] + GradPhi[0] * delta;
+    Projected[1] = Projected[1] + GradPhi[1] * delta;
 }
 
 /* Calculates the twin point given a point */
