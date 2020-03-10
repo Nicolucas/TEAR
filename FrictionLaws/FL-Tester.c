@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include "SetOfFrictionLaws.c"
+#include "Lib_SetOfFrictionLaws.c"
 
 
-void RectFunction(float Y[], float y_o, float x, float x1, float x2, float Amplitude)
+void RectFunction(double Y[], double y_o, double x, double x1, double x2, double Amplitude)
 {
     if (x > x1 && x < x2)
     {
@@ -15,18 +15,18 @@ void RectFunction(float Y[], float y_o, float x, float x1, float x2, float Ampli
 
 int main () {
     FILE *fp;
-    float Tau[1000], Slip[1000], SlipRate[1000], Fric[1000],time[1000];
-    float mu_s = 0.6, mu_d = 0.3, D_c = 0.01;
-    float sigma_n[3];
+    double Tau[1000], Slip[1000], SlipRate[1000], Fric[1000],time[1000];
+    double mu_s = 0.6, mu_d = 0.3, D_c = 0.01;
+    double sigma_n[3];
     int i,j;
 
-    float DeltaTime = 0.1;
-    float DeltaSlip = 0.0002;
+    double DeltaTime = 0.1;
+    double DeltaSlip = 0.0002;
      
 
-    float ListOfParameters[5] = {0.011, 0.016, 0.2, DeltaSlip/(2.0*DeltaTime), D_c};
+    double ListOfParameters[5] = {0.011, 0.016, 0.2, DeltaSlip/(2.0*DeltaTime), D_c};
     
-    float Theta, theta_oo, theta_o;
+    double Theta, theta_oo, theta_o;
     
     theta_o = D_c/(ListOfParameters[3]);
     

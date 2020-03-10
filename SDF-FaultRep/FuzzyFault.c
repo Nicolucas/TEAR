@@ -3,40 +3,40 @@
 #include <math.h>
 
 /* function prototypes */
-void EvalPhi(float loc[],float* phi);
-void PointInFaut(float distLoc,float delta,bool *InFault);
-void NablaPhi(float GradPhi[]);
-void GetProj(float loc[],float GradPhi[], float PhiEval, float Projected[]);
-void GetProjDelta(float loc[],float GradPhi[], float PhiEval, float delta,float Projected[]);
-void GetTwins(float loc[],float PhiEval,float GradPhi[],float Twin[]);
-void TangentVect(float GradPhi[],float TanDir[]);
-void TangentVel(float Velocity[],float TanVect[],float TanVel[]);
-void EvalVelocity(float PhiEval,float Velocity[]);
-void CalcSlipRate(float VelPlus[], float VelMinus[],float PhiPlus,float PhiMinus, bool LocInFault, float SlipRate[]);
-void LocateInFault(float loc[], bool LocInFault,float GradPhi[], float PhiEval,float delta, float PostLocation[]);
+void EvalPhi(double loc[],double* phi);
+void PointInFaut(double distLoc,double delta,bool *InFault);
+void NablaPhi(double GradPhi[]);
+void GetProj(double loc[],double GradPhi[], double PhiEval, double Projected[]);
+void GetProjDelta(double loc[],double GradPhi[], double PhiEval, double delta,double Projected[]);
+void GetTwins(double loc[],double PhiEval,double GradPhi[],double Twin[]);
+void TangentVect(double GradPhi[],double TanDir[]);
+void TangentVel(double Velocity[],double TanVect[],double TanVel[]);
+void EvalVelocity(double PhiEval,double Velocity[]);
+void CalcSlipRate(double VelPlus[], double VelMinus[],double PhiPlus,double PhiMinus, bool LocInFault, double SlipRate[]);
+void LocateInFault(double loc[], bool LocInFault,double GradPhi[], double PhiEval,double delta, double PostLocation[]);
 
 
 int main (int nargs, char *args[])
 {
-    float loc[2];
-    float Phi;
-    float delta;
+    double loc[2];
+    double Phi;
+    double delta;
     bool  InFault;
-    float GradPhi[2];
-    float ProjectedLoc[2];
-    float TwinPoint[2];
-    float TanDir[2];
+    double GradPhi[2];
+    double ProjectedLoc[2];
+    double TwinPoint[2];
+    double TanDir[2];
     
-    float Velocity[2];
-    float tVel[2];
-    float SlipRate[2];
+    double Velocity[2];
+    double tVel[2];
+    double SlipRate[2];
 
-    float PostLocation[2];
-    float PostTwin[2];
-    float PhiPL;
-    float PhiTwin;
-    float VelocityOne[2], VelTanOne[2], TanDirOne[2];
-    float VelocityTwo[2], VelTanTwo[2], TanDirTwo[2];
+    double PostLocation[2];
+    double PostTwin[2];
+    double PhiPL;
+    double PhiTwin;
+    double VelocityOne[2], VelTanOne[2], TanDirOne[2];
+    double VelocityTwo[2], VelTanTwo[2], TanDirTwo[2];
 
   
     loc[0] = 4.0;
@@ -92,13 +92,13 @@ int main (int nargs, char *args[])
 }
 
 /* Calculates Phi given a point x,y. */
-void EvalPhi(float loc[], float* phi)
+void EvalPhi(double loc[], double* phi)
 {
     phi[0] = loc[1] - 10.0; /* y - 10 */
 }
 
 /* Checks if the location is within the fault */
-void PointInFaut(float distLoc, float delta, bool *InFault)
+void PointInFaut(double distLoc, double delta, bool *InFault)
 {
     if (fabsf(distLoc) <= delta) {
         *InFault = true;
@@ -108,21 +108,21 @@ void PointInFaut(float distLoc, float delta, bool *InFault)
 }
 
 /* Calculates GradPhi and returns an array with direction, normalized by def. */
-void NablaPhi(float GradPhi[])
+void NablaPhi(double GradPhi[])
 {
     GradPhi[0] = 0.0; /* as in example */
     GradPhi[1] = 1.0;
 }
 
 /* Calculates the projected point given a point */
-void GetProj(float loc[], float GradPhi[], float PhiEval, float Projected[])
+void GetProj(double loc[], double GradPhi[], double PhiEval, double Projected[])
 {
     Projected[0] = loc[0] - GradPhi[0] * PhiEval;
     Projected[1] = loc[1] - GradPhi[1] * PhiEval;
 }
 
 /* Calculates the projected point on the +/-delta surface given a point */
-void GetProjDelta(float loc[], float GradPhi[], float PhiEval, float delta,float Projected[])
+void GetProjDelta(double loc[], double GradPhi[], double PhiEval, double delta,double Projected[])
 {
     GetProj(loc, GradPhi, PhiEval, Projected);
 
@@ -131,23 +131,23 @@ void GetProjDelta(float loc[], float GradPhi[], float PhiEval, float delta,float
 }
 
 /* Calculates the twin point given a point */
-void GetTwins(float loc[], float PhiEval, float GradPhi[], float Twin[])
+void GetTwins(double loc[], double PhiEval, double GradPhi[], double Twin[])
 {
     Twin[0] = loc[0] - 2.0 * GradPhi[0] * PhiEval;
     Twin[1] = loc[1] - 2.0 * GradPhi[1] * PhiEval;
 }
 
 /* Calculate tangent vector */
-void TangentVect(float GradPhi[], float TanDir[])
+void TangentVect(double GradPhi[], double TanDir[])
 {
     TanDir[0] =  GradPhi[1];
     TanDir[1] = -GradPhi[0];
 }
 
 /* Calculate tangent velocity */
-void TangentVel(float Velocity[], float TanVect[], float TanVel[])
+void TangentVel(double Velocity[], double TanVect[], double TanVel[])
 {
-    float VecDotVel;
+    double VecDotVel;
 
     VecDotVel = Velocity[0] * TanVect[0] + Velocity[1] * TanVect[1];
 
@@ -156,7 +156,7 @@ void TangentVel(float Velocity[], float TanVect[], float TanVel[])
 }
 
 /* Evaluate velocity */
-void EvalVelocity(float PhiEval, float Velocity[])
+void EvalVelocity(double PhiEval, double Velocity[])
 {
     if (PhiEval < 0) {
         Velocity[0] = 3.0;
@@ -171,7 +171,7 @@ void EvalVelocity(float PhiEval, float Velocity[])
 }
 
 /* Calculates the twin point given a point */
-void LocateInFault(float loc[], bool LocInFault, float GradPhi[], float PhiEval, float delta, float PostLocation[])
+void LocateInFault(double loc[], bool LocInFault, double GradPhi[], double PhiEval, double delta, double PostLocation[])
 {
     if (LocInFault) {
         GetProjDelta(loc, GradPhi, PhiEval, delta, PostLocation);
@@ -182,7 +182,7 @@ void LocateInFault(float loc[], bool LocInFault, float GradPhi[], float PhiEval,
 }
 
 /* Calculate slip rate for a location */
-void CalcSlipRate(float VelPlus[], float VelMinus[], float PhiPlus, float PhiMinus, bool LocInFault, float SlipRate[])
+void CalcSlipRate(double VelPlus[], double VelMinus[], double PhiPlus, double PhiMinus, bool LocInFault, double SlipRate[])
 {
     SlipRate[0] = 0.0;
     SlipRate[1] = 0.0;
