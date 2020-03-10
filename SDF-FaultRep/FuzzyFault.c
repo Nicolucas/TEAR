@@ -48,7 +48,7 @@ int main (int nargs, char *args[])
 
     EvalPhi(loc, &Phi);
     printf("Signed distance (Phi) is : %f\n", Phi);
-    printf("Distance (|Phi|) is : %f\n", fabsf(Phi));
+    printf("Distance (|Phi|) is : %f\n", fabs(Phi));
 
     PointInFaut(Phi, delta, &InFault);
     printf("Is point in the fault? : %s\n", InFault ? "true": "false");
@@ -100,7 +100,7 @@ void EvalPhi(double loc[], double* phi)
 /* Checks if the location is within the fault */
 void PointInFaut(double distLoc, double delta, bool *InFault)
 {
-    if (fabsf(distLoc) <= delta) {
+    if (fabs(distLoc) <= delta) {
         *InFault = true;
     } else {
         *InFault = false;
