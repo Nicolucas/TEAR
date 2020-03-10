@@ -190,10 +190,24 @@ void CalcSlipRate(double VelPlus[], double VelMinus[], double PhiPlus, double Ph
     SlipRate[0] = 0.0;
     SlipRate[1] = 0.0;
     if (LocInFault) {
-        if (PhiPlus > PhiMinus) {
+        if (PhiPlus * PhiMinus > 0) {
+            printf("[Error] CalcSlipRate(): phi(+) and phi(-) must be of opposite sign!\n");
+            printf("[Error] CalcSlipRate(): phi(+) = %+1.4e, phi(-) = %+1.4e\n",PhiPlus,PhiMinus);
+            return;
+        }
+      
+        if (PhiPlus > 0) {
             SlipRate[0] = VelPlus[0] - VelMinus[0];
             SlipRate[1] = VelPlus[1] - VelMinus[1];
-        } else if (PhiPlus < PhiMinus) {
+        } else {
+            /* 
+             Note: I believe this else case is redundent.
+             One should compute slip = V+ - V-. 
+             If you always project from any coordinate first to phi = 0,
+             and then to phi = delta, we should never have to enter here.
+             Something to think about.
+             ~ DAM
+            */
             SlipRate[0] = VelMinus[0] - VelPlus[0];
             SlipRate[1] = VelMinus[1] - VelPlus[1];
         }
