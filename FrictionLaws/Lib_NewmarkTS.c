@@ -56,5 +56,5 @@ void GetSlipFromTraction(double delta, double G, bool UpStress, double Traction,
 
 void GetSlipRate(double OldSlip, double Slip, double TimeStep, double *SlipRate)
 {
-    SlipRate[0] = 2.0 * (Slip - OldSlip) /  TimeStep
+    SlipRate[0] = 2.0 * (Slip - OldSlip) /  TimeStep;
 }
