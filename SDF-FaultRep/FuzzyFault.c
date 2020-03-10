@@ -124,7 +124,7 @@ void GetProj(float loc[], float GradPhi[], float PhiEval, float Projected[])
 /* Calculates the projected point on the +/-delta surface given a point */
 void GetProjDelta(float loc[], float GradPhi[], float PhiEval, float delta,float Projected[])
 {
-    GetProj(loc, GradPhi, PhiEval, &Projected);
+    GetProj(loc, GradPhi, PhiEval, Projected);
 
     Projected[0] = Projected[0] + GradPhi[0] * delta;
     Projected[1] = Projected[1] + GradPhi[1] * delta;
