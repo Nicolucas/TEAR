@@ -11,7 +11,7 @@ void GetProjDelta(double loc[],double GradPhi[], double PhiEval, double delta,do
 void GetTwins(double loc[],double PhiEval,double GradPhi[],double Twin[]);
 void TangentVect(double GradPhi[],double TanDir[]);
 void TangentVel(double Velocity[],double TanVect[],double TanVel[]);
-void EvalVelocity(double PhiEval,double Velocity[]);
+void EvalVelocity(double loc[],double Velocity[]);
 void CalcSlipRate(double VelPlus[], double VelMinus[],double PhiPlus,double PhiMinus, bool LocInFault, double SlipRate[]);
 void LocateInFault(double loc[], bool LocInFault,double GradPhi[], double PhiEval,double delta, double PostLocation[]);
 
@@ -65,7 +65,7 @@ int main (int nargs, char *args[])
     TangentVect(GradPhi, TanDir);
     printf("Tangent direction is : %f, %f\n", TanDir[0], TanDir[1]);
 
-    EvalVelocity(Phi, Velocity);
+    EvalVelocity(loc, Velocity);
     TangentVel(Velocity, TanDir, tVel);
     printf("Tangent velocity is : %f, %f\n", tVel[0], tVel[1]);
 
@@ -78,11 +78,11 @@ int main (int nargs, char *args[])
     printf("Projected fault coordinate (post) : %f, %f\n", PostLocation[0], PostLocation[1]);
     printf("Projected fault coordinate (twin) : %f, %f\n", PostTwin[0], PostTwin[1]);
 
-    EvalVelocity(PhiPL, VelocityOne);
+    EvalVelocity(PostLocation, VelocityOne);
     TangentVect(GradPhi, TanDirOne);
     TangentVel(VelocityOne, TanDirOne, VelTanOne);
 
-    EvalVelocity(PhiTwin, VelocityTwo);
+    EvalVelocity(PostTwin, VelocityTwo);
     TangentVect(GradPhi, TanDirTwo);
     TangentVel(VelocityTwo, TanDirTwo, VelTanTwo);
 
@@ -156,8 +156,11 @@ void TangentVel(double Velocity[], double TanVect[], double TanVel[])
 }
 
 /* Evaluate velocity */
-void EvalVelocity(double PhiEval, double Velocity[])
+void EvalVelocity(double loc[], double Velocity[])
 {
+    double PhiEval;
+  
+    EvalPhi(loc, &PhiEval);
     if (PhiEval < 0) {
         Velocity[0] = 3.0;
         Velocity[1] = 1.0;
