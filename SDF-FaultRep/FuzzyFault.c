@@ -52,8 +52,8 @@ void GetTwins(double loc[], double PhiEval, double GradPhi[], double Twin[])
 /* Calculate tangent vector */
 void TangentVect(double GradPhi[], double TanDir[])
 {
-    TanDir[0] =  GradPhi[1];
-    TanDir[1] = -GradPhi[0];
+    TanDir[0] = -GradPhi[1];
+    TanDir[1] = GradPhi[0];
 }
 
 /* Calculate tangent velocity */
@@ -129,8 +129,8 @@ void CalcSlipRate(double VelPlus[], double VelMinus[], double PhiPlus, double Ph
 
 void NormalVecGetTangentVec(double n[], double t[])
 {
-  t[0] =  n[1];
-  t[1] = -n[0];
+  t[0] = -n[1];
+  t[1] =  n[0];
 }
 
 void VecDot(double x[], double y[], double *d)
