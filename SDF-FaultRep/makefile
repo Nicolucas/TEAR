@@ -10,6 +10,8 @@ SRC =	FuzzyFault.c \
 
 OBJ = $(SRC:.c=.o)
 
+HDR = $(SRC:.c=.h)
+
 all:
 	-@$(MAKE) demo
 
@@ -19,7 +21,7 @@ demo:
 fuzzyfaultdemo1: $(OBJ) demo1.o
 	$(CC) $(CFLAGS) -o fuzzyfaultdemo1 demo1.o $(INC) $(OBJ) $(LIBS)
 
-%.o: %.c
+%.o: %.c $(HDR)
 	-@echo "---- Compiling $*.c -----"
 	$(CC) $(CFLAGS) -c $*.c $(INC)
 
