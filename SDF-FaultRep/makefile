@@ -24,7 +24,7 @@ fuzzyfaultdemo1: $(OBJ) demo1.o
 	$(CC) $(CFLAGS) -c $*.c $(INC)
 
 clean:
-	rm -rf *.o
-	rm -rf fuzzyfaultdemo1
-	rm -rf *.dSYM
+	-@rm -rf *.o
+	-@rm -rf fuzzyfaultdemo1
+	-@rm -rf *.dSYM
 
