@@ -1,6 +1,6 @@
 
 CC = gcc
-CFLAGS = -g -O0 -std=c99
+CFLAGS = -g -O0 -Wall -std=c99
 
 LIBS = -lm
 
