@@ -11,6 +11,8 @@ SRC =	Lib_SetOfFrictionLaws.c \
 
 OBJ = $(SRC:.c=.o)
 
+HDR = $(SRC:.c=.h)
+
 all:
 	-@$(MAKE) fl_tester
 	-@$(MAKE) stress_sandbox
@@ -22,9 +24,10 @@ fl_tester: $(OBJ) FL_Tester.o
 stress_sandbox: $(OBJ) Stress_Sandbox.o
 	$(CC) $(CFLAGS) -o stress_sandbox Stress_Sandbox.o $(INC) $(OBJ) $(LIBS)
 
-%.o: %.c
+%.o: %.c $(HDR)
 	-@echo "---- Compiling $*.c -----"
 	$(CC) $(CFLAGS) -c $*.c $(INC)
+
 
 clean:
 	-@rm -rf *.o
