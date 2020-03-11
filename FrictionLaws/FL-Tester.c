@@ -16,7 +16,8 @@ void RectFunction(double Y[], double y_o, double x, double x1, double x2, double
 }
 
 
-int main () {
+int main(int nargs,char *args[])
+{
     FILE *fp;
     double Tau[1000], Slip[1000], SlipRate[1000], Fric[1000],time[1000];
     double mu_s = 0.6, mu_d = 0.3, D_c = 0.01;
@@ -87,4 +88,6 @@ int main () {
         }
         fclose(fp);
     }
+  
+    return(0);
 }

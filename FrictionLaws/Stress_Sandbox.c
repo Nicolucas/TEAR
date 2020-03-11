@@ -5,7 +5,8 @@
 #include "Lib_NewmarkTS.h"
 
 
-int main () {
+int main(int nargs,char *args[])
+{
     FILE *fp;
 
     double Tau[1000], Slip[1000], SlipRate[1000];
@@ -28,5 +29,5 @@ int main () {
     SlipRate[0]=0;
 
 
-
+    return(0);
 }
