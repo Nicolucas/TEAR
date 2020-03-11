@@ -16,8 +16,8 @@ all:
 	-@$(MAKE) stress_sandbox
 
 
-fl_tester: $(OBJ) FL-Tester.o
-	$(CC) $(CFLAGS) -o fl_tester FL-Tester.o $(INC) $(OBJ) $(LIBS)
+fl_tester: $(OBJ) FL_Tester.o
+	$(CC) $(CFLAGS) -o fl_tester FL_Tester.o $(INC) $(OBJ) $(LIBS)
 
 stress_sandbox: $(OBJ) Stress_Sandbox.o
 	$(CC) $(CFLAGS) -o stress_sandbox Stress_Sandbox.o $(INC) $(OBJ) $(LIBS)
