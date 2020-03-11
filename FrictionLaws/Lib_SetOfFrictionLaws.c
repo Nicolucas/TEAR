@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <math.h>
+#include "Lib_SetOfFrictionLaws.h"
 
 /**
  * Different sets of friction laws

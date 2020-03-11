@@ -1,0 +1,4 @@
+*.o
+*.dSYM
+fl_tester
+stress_sandbox

@@ -1,5 +1,8 @@
+
 #include <stdio.h>
-#include "Lib_SetOfFrictionLaws.c"
+#include <stdlib.h>
+#include <math.h>
+#include "Lib_SetOfFrictionLaws.h"
 
 
 void RectFunction(double Y[], double y_o, double x, double x1, double x2, double Amplitude)

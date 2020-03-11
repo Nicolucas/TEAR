@@ -1,4 +1,8 @@
-#include "Lib_NewmarkTS.c"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include "Lib_NewmarkTS.h"
 
 
 int main () {

@@ -1,5 +1,6 @@
 #include <stdio.h>
-#include "Lib_SetOfFrictionLaws.c"
+#include "Lib_SetOfFrictionLaws.h"
+#include "Lib_NewmarkTS.h"
 
 
 void PartialUpScalar(double ScalarIn, double ScalarHalf, double TimeStep, double ScalarDot)
@@ -32,7 +33,7 @@ void CompTauCritic(double Sigma[], double Sdot, double Theta, double ListOfParam
 
 void GetFaultTraction(double Sigma[],double n_T[], double n[], double TauC, double *Traction, bool *UpStress)
 {
-    CalcSigmaComponent(Sigma, n_T, n, &Traction);
+    CalcSigmaComponent(Sigma, n_T, n, Traction);
     UpStress[0] = false; 
 
     if (Traction[0] > TauC)
