@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "setoffrictionlaws.h": "c",
-        "stdbool.h": "c"
+        "stdbool.h": "c",
+        "lib_newmarkts.h": "c"
     }
 }
