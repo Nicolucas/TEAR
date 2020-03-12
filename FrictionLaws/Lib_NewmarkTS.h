@@ -4,7 +4,7 @@
 
 #include <stdbool.h>
 
-void PartialUpScalar(double ScalarIn, double ScalarHalf, double TimeStep, double ScalarDot);
+void PartialUpScalar(double ScalarIn, double *ScalarHalf, double TimeStep, double ScalarDot);
 void PartialUpVector(double VectIn[], double VectHalf[], double TimeStep, double VectDot[]);
 void CalcSigmaComponent(double Sigma[],double n_i[], double n_j[], double *SigmaScalar);
 void CompTauCritic(double Sigma[], double Sdot, double Theta, double ListOfParameters[], double n[], double *TauC);

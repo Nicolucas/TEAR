@@ -3,9 +3,9 @@
 #include "Lib_NewmarkTS.h"
 
 
-void PartialUpScalar(double ScalarIn, double ScalarHalf, double TimeStep, double ScalarDot)
+void PartialUpScalar(double ScalarIn, double *ScalarHalf, double TimeStep, double ScalarDot)
 {
-    ScalarHalf = ScalarIn + 0.5*TimeStep*ScalarDot;
+    ScalarHalf[0] = ScalarIn + 0.5*TimeStep*ScalarDot;
 }
 
 void PartialUpVector(double VectIn[], double VectHalf[], double TimeStep, double VectDot[])
