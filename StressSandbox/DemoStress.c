@@ -68,9 +68,9 @@ void DoTheEvolution(double loc[],double delta, double displacement[],double *Sli
   /**
    * Step 3.2 Get tau and compare with 
   */
-  GetFaultTraction(sigma, Tangent,Normal, TauC, Traction, &UpdateStress);
+  GetFaultTraction(sigma, Tangent,Normal, TauC, &Traction[0], &UpdateStress);
   sigma[2]=Traction[0];
-  //printf("%f\n",TauC);
+  printf("Tau_c: %f - Traction: %f\n",TauC , Traction[0]);
   if(UpdateStress)
   {
     printf("Its Happening!\n");
@@ -115,7 +115,7 @@ int main(int nargs,char *args[])
 
 
     loc[0] = 4.0;
-    loc[1] = 5.0;
+    loc[1] = 15.0;
     delta = 6.0;
     
 
