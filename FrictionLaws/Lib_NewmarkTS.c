@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 #include "Lib_SetOfFrictionLaws.h"
 #include "Lib_NewmarkTS.h"
 
@@ -27,15 +28,15 @@ void CompTauCritic(double Sigma[], double Sdot, double Theta, double ListOfParam
     FricRS(&Fric, Sdot, Theta, ListOfParameters);
     CalcSigmaComponent(Sigma, n, n, &SigmaN);
     TauC[0] = SigmaN * Fric;
-    printf("%f - %f\n",SigmaN,Fric);
+    //printf("%f - %f\n",SigmaN,Fric);
 }
 
 void GetFaultTraction(double Sigma[],double n_T[], double n[], double TauC, double *Traction, bool *UpStress)
 {
-    CalcSigmaComponent(Sigma, n_T, n, Traction);
+    CalcSigmaComponent(Sigma, n_T, n, &Traction[0]);
     UpStress[0] = false; 
 
-    if (Traction[0] > TauC)
+    if (fabs(Traction[0]) > fabs(TauC))
     {
         UpStress[0] = true;
     }  
