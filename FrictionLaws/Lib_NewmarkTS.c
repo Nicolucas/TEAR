@@ -26,9 +26,8 @@ void CompTauCritic(double Sigma[], double Sdot, double Theta, double ListOfParam
 
     FricRS(&Fric, Sdot, Theta, ListOfParameters);
     CalcSigmaComponent(Sigma, n, n, &SigmaN);
-
     TauC[0] = SigmaN * Fric;
-
+    printf("%f - %f\n",SigmaN,Fric);
 }
 
 void GetFaultTraction(double Sigma[],double n_T[], double n[], double TauC, double *Traction, bool *UpStress)
