@@ -37,7 +37,8 @@ void DoTheEvolution(double loc[],double delta, double displacement[],double *Sli
    *         --> We leave the velocity as it is (Constant velocity extracted from the field in Phi)
   */
   PartialUpVector(displacement,displacementHalf,2.0*deltaTime,velocity);
-
+  displacement[0] = displacementHalf[0];
+  displacement[1] = displacementHalf[1];
 
   /**
    * Step 2. Extraction of SlipDot from the SDF
@@ -47,9 +48,9 @@ void DoTheEvolution(double loc[],double delta, double displacement[],double *Sli
   
 
   PartialUpScalar(Slip[0], &SlipHalf,deltaTime,SlipDot[0]);
-  printf("Slip %f - %f \n",Slip[0],SlipHalf);
 
-  DotState_AgingLaw(ListOfParameters, SlipDot[0], Theta, &ThetaDot);
+  DotState_AgingLaw(ListOfParameters, SlipDot[0], Theta[0], &ThetaDot);
+  
   PartialUpScalar(Theta[0], &ThetaHalf, deltaTime,ThetaDot);
 
   /**
@@ -58,6 +59,7 @@ void DoTheEvolution(double loc[],double delta, double displacement[],double *Sli
   CalcStrainTensor(e_vect, deltaSlip, displacementHalf);
   CalcStress(lambda, G, e_vect, sigma);
 
+  
   /**
    * Step 3.1 Calculate Tau_Critical
   */
@@ -67,14 +69,20 @@ void DoTheEvolution(double loc[],double delta, double displacement[],double *Sli
    * Step 3.2 Get tau and compare with 
   */
   GetFaultTraction(sigma, Tangent,Normal, TauC, Traction, &UpdateStress);
-  
+  sigma[2]=Traction[0];
+  //printf("%f\n",TauC);
+  if(UpdateStress)
+  {
+    printf("Its Happening!\n");
+  }
   /**
    * Step 4 Update of the slip and the state variable
   */
   GetSlipFromTraction(delta, G, UpdateStress, Traction[0], TauC, SlipHalf, Slip);
   
+  DotState_AgingLaw(ListOfParameters, SlipDot[0], ThetaHalf, &ThetaDot);
   PartialUpScalar(ThetaHalf, Theta, deltaTime, SlipDot[0]);
-  PartialUpVector(displacementHalf,displacement,2.0*deltaTime,velocity);
+  
 
 }
 
@@ -95,12 +103,13 @@ int main(int nargs,char *args[])
     double time = 0.0;
     int i;
 
-    deltaTime = 0.1; 
-    deltaSlip = 0.0002;
+    deltaTime = 0.001; 
+    deltaSlip = 0.00001;
+    // Unpacking ListOfParameters = [a, b, mu_o, V_o, D_c]
     ListOfParameters[0] = 0.011 ;
     ListOfParameters[1] = 0.016;
-    ListOfParameters[2] = 0.2;
-    ListOfParameters[3] = deltaSlip/(2.0*deltaTime);
+    ListOfParameters[2] = 0.01;
+    ListOfParameters[3] = 4.0 * pow(10.0,-9.0);//deltaSlip/(2.0*deltaTime); //
     ListOfParameters[4] = D_c;
 
 
@@ -121,7 +130,7 @@ int main(int nargs,char *args[])
     printf("=== %s : START! ===\n",__FUNCTION__);
 
 
-    for (i=1; i<50; i++)
+    for (i=1; i<1000; i++)
     {
       time += deltaTime;
       DoTheEvolution(loc, delta, displacement, &Slip, deltaTime, deltaSlip, ListOfParameters, &Theta_o, &Tau);
