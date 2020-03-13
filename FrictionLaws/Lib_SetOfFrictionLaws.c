@@ -111,11 +111,11 @@ void EvalModRateStateFriction(double Tau[], double sigma_n[], double Sdot, doubl
  * --> 
  * \theta(\theta_o, \Dot{S}, t) = C * exp(-\Dot{S} * t / L) + L / \Dot{S}
 */
-void DotState_AgingLaw(double ListOfParameters[], double Sdot, double* Theta, double* ThetaDot)
+void DotState_AgingLaw(double ListOfParameters[], double Sdot, double Theta, double* ThetaDot)
 {
     double D_c = ListOfParameters[4]; //Length scale
 
-    ThetaDot[0] = Theta[0] * Sdot / D_c ; 
+    ThetaDot[0] = 1.0 - Theta * Sdot / D_c ; 
 }
 
 void State_AgingLaw(double theta_o, double Sdot, double ListOfParameters[], double time,double* Theta)
