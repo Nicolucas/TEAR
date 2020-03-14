@@ -25,10 +25,16 @@ void CompTauCritic(double Sigma[], double Sdot, double Theta, double ListOfParam
     double Fric;
     double SigmaN;
 
+
     FricRS(&Fric, Sdot, Theta, ListOfParameters);
     CalcSigmaComponent(Sigma, n, n, &SigmaN);
-    TauC[0] = SigmaN * Fric;
-    //printf("%f - %f\n",SigmaN,Fric);
+
+    TauC[0] = 0.0;
+
+    if(SigmaN<0.0)
+    {
+        TauC[0] = - SigmaN * Fric;
+    }
 }
 
 void GetFaultTraction(double Sigma[],double n_T[], double n[], double TauC, double *Traction, bool *UpStress)
@@ -44,7 +50,6 @@ void GetFaultTraction(double Sigma[],double n_T[], double n[], double TauC, doub
 
 void GetSlipFromTraction(double delta, double G, bool UpStress, double Traction, double TauC, double OldSlip, double *NewSlip)
 {
-
     if (UpStress)
     {
         NewSlip[0] = OldSlip + (Traction - TauC) * delta / G;
