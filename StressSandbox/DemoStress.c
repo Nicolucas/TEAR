@@ -8,8 +8,31 @@
 #include "../FrictionLaws/Lib_SetOfFrictionLaws.h"
 #include "Lib_MiniVoigt.h"
 
+void Displacement(double x, double y, double t, double DispVect[], double Grad[], double VelocityVect[])
+{
+  DispVect[0] = exp(2.0*x)*exp(5.0*t);
+  DispVect[1] = exp(-10.0*y)*exp(3.0*x);
 
-void DoTheEvolution(double loc[],double delta, double displacement[],double *Slip, double deltaTime, double deltaSlip, double ListOfParameters[], double *Theta, double *Traction)
+  VelocityVect[0] = 5.0*exp(2.0*x)*exp(5.0*t);
+  VelocityVect[1] = 0.0;  
+
+  Grad[0] = 2.0*exp(2.0*x)*exp(5.0*t); //DU_1/Dx
+  Grad[1] = -10.0*exp(-10.0*y); //DU_2/Dy
+  Grad[2] = 3.0*exp(-10.0*y)*exp(3.0*x); //DU_2/Dx
+  Grad[3] = -10.0*exp(-10.0*y)*exp(3.0*x); //DU_1/Dy
+}
+
+void Slip(double DispVect[],double *Slip)
+{
+  Slip[0] = DispVect[0];
+}
+void SlipRate(double VelVect[], double *SlipDot)
+{
+  SlipDot[0]=VelVect[0];
+}
+
+
+void DoTheEvolution(double loc[],double delta, double displacement[],double *Slip, double deltaTime, double time, double deltaSlip, double ListOfParameters[], double *Theta, double *Traction)
 {
   double Normal[2];
   double Tangent[2];
@@ -19,35 +42,37 @@ void DoTheEvolution(double loc[],double delta, double displacement[],double *Sli
   double SlipDot[2];
 
   double e_vect[3], sigma[3];
-  double lambda = 30.0, G = 24.0;
+  double lambda = 30.0, G = 10.0;
 
   double TauC;
   bool UpdateStress;
   //double Traction;
 
+  double Grad[4];
+
   
   NablaPhi(loc,Normal);
   NormalVecGetTangentVec(Normal,Tangent);
-  EvalVelocity(loc,velocity);
-
+  //EvalVelocity(loc,velocity);
+  Displacement( loc[0],  loc[1],  time,  displacement,  Grad,  velocity);
   
   /**
    * Step 1. Displacement update 
    *         --> Getting displacement at t+1
    *         --> We leave the velocity as it is (Constant velocity extracted from the field in Phi)
   */
-  PartialUpVector(displacement,displacementHalf,2.0*deltaTime,velocity);
-  displacement[0] = displacementHalf[0];
-  displacement[1] = displacementHalf[1];
+  //PartialUpVector(displacement,displacementHalf,2.0*deltaTime,velocity);
+  //displacement[0] = displacementHalf[0];
+  //displacement[1] = displacementHalf[1];
 
   /**
    * Step 2. Extraction of SlipDot from the SDF
    *         --> Getting Slip (Scalar) and State Theta t+1/2
   */
-  EvaluateSlipRateAtPoint(loc, delta, SlipDot);
+  //EvaluateSlipRateAtPoint(loc, delta, SlipDot);
   
 
-  PartialUpScalar(Slip[0], &SlipHalf,deltaTime,SlipDot[0]);
+  //PartialUpScalar(Slip[0], &SlipHalf,deltaTime,SlipDot[0]);
 
   DotState_AgingLaw(ListOfParameters, SlipDot[0], Theta[0], &ThetaDot);
   
@@ -56,10 +81,15 @@ void DoTheEvolution(double loc[],double delta, double displacement[],double *Sli
   /**
    * Step 3. Calculate Stress and get Tau
   */
-  CalcStrainTensor(e_vect, deltaSlip, displacementHalf);
+  e_vect[0]=Grad[0];
+  e_vect[1]=Grad[1];
+  e_vect[2]=(Grad[2]+Grad[3]);
+  //CalcStrainTensor(e_vect, deltaSlip, displacementHalf);
   CalcStress(lambda, G, e_vect, sigma);
+  /** Calculate the difference for e vect
+  */
 
-  
+
   /**
    * Step 3.1 Calculate Tau_Critical
   */
@@ -83,7 +113,6 @@ void DoTheEvolution(double loc[],double delta, double displacement[],double *Sli
   DotState_AgingLaw(ListOfParameters, SlipDot[0], ThetaHalf, &ThetaDot);
   PartialUpScalar(ThetaHalf, Theta, deltaTime, SlipDot[0]);
   
-
 }
 
 
@@ -104,7 +133,7 @@ int main(int nargs,char *args[])
     int i;
 
     deltaTime = 0.001; 
-    deltaSlip = 0.00001;
+    deltaSlip = 0.0001;
     // Unpacking ListOfParameters = [a, b, mu_o, V_o, D_c]
     ListOfParameters[0] = 0.011 ;
     ListOfParameters[1] = 0.016;
@@ -114,8 +143,8 @@ int main(int nargs,char *args[])
 
 
 
-    loc[0] = 4.0;
-    loc[1] = 15.0;
+    loc[0] = 0.001;
+    loc[1] = 0.00001;
     delta = 6.0;
     
 
@@ -133,7 +162,7 @@ int main(int nargs,char *args[])
     for (i=1; i<1000; i++)
     {
       time += deltaTime;
-      DoTheEvolution(loc, delta, displacement, &Slip, deltaTime, deltaSlip, ListOfParameters, &Theta_o, &Tau);
+      DoTheEvolution(loc, delta, displacement, &Slip, deltaTime, time, deltaSlip, ListOfParameters, &Theta_o, &Tau);
 
       fprintf(fp, "%f ; %f ; %f \n", time, Tau, Slip);
     }
