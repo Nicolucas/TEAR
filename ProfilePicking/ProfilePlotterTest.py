@@ -27,9 +27,9 @@ class MGridData:
     def PlotNExtractProfile(self):
         fig, ax = plt.subplots(nrows=1)
         self.fig = fig
-        ax.imshow(self.ZGrid, origin="lower",cmap="RdBu_r")
+        ax.imshow(self.ZGrid, origin="lower",cmap ="RdBu_r")
         cid = self.fig.canvas.mpl_connect("button_press_event", self.onclick)
-        self.cid= cid
+        self.cid = cid
         
         plt.show()
 
