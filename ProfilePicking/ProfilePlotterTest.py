@@ -56,7 +56,6 @@ X, Y = np.mgrid[-3:3:complex(0, N), -2:2:complex(0, N)]
 Z1 = np.exp(-X**2 - Y**2)
 Z2 = np.exp(-(X - 1)**2 - (Y - 1)**2)
 Z = (Z1 - Z2) * 2
-Z = np.sin(X**2 + Y**2) / (X**2 + Y**2)
 
 
 MGrid = MGridData(NumPoints=1000,ZGrid=Z)
