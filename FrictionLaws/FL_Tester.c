@@ -22,7 +22,7 @@ int main(int nargs,char *args[])
     double Tau[1000], Slip[1000], SlipRate[1000], Fric[1000],time[1000];
     double mu_s = 0.6, mu_d = 0.3, D_c = 0.01;
     double sigma_n[3];
-    int i,j;
+    int i;
     double ThetaDot;
 
     double DeltaTime = 0.1;
@@ -50,7 +50,7 @@ int main(int nargs,char *args[])
 
             FricSW(&Fric[i], mu_s, mu_d, D_c, &Slip[i]);
             EvalSlipWeakening(&Tau[i],sigma_n, mu_s, mu_d, D_c, &Slip[i]);
-            fprintf(fp, "%f ; %f ; %f ; %f  ; %f\n", time[i], Tau[i], Slip[i], SlipRate[i], Fric[i]);
+            fprintf(fp, "%f ; %f ; %f ; %f ; %f ; %f \n", time[i], Tau[i], Slip[i], SlipRate[i], Fric[i], theta_o);
         }
         fclose(fp);
     }
@@ -70,7 +70,7 @@ int main(int nargs,char *args[])
             
             FricRS(&Fric[i], SlipRate[i], Theta, ListOfParameters);
             EvalRateStateFriction(&Tau[i], sigma_n, SlipRate[i], Theta, ListOfParameters);
-            fprintf(fp, "%f ; %f ; %f ; %f ; %f\n", time[i], Tau[i], Slip[i], SlipRate[i], Fric[i]);
+            fprintf(fp, "%f ; %f ; %f ; %f ; %f ; %f \n", time[i], Tau[i], Slip[i], SlipRate[i], Fric[i], theta_o);
         }
         fclose(fp);
     }
@@ -85,7 +85,7 @@ int main(int nargs,char *args[])
             
             FricModRS(&Fric[i], SlipRate[i], Theta, ListOfParameters);
             EvalModRateStateFriction(&Tau[i], sigma_n, SlipRate[i], Theta, ListOfParameters);
-            fprintf(fp, "%f ; %f ; %f ; %f ; %f\n", time[i], Tau[i], Slip[i], SlipRate[i], Fric[i]);
+            fprintf(fp, "%f ; %f ; %f ; %f ; %f ; %f \n", time[i], Tau[i], Slip[i], SlipRate[i], Fric[i], theta_o);
         }
         fclose(fp);
     }
@@ -99,12 +99,12 @@ int main(int nargs,char *args[])
             Slip[i] = Slip[i-1] + SlipRate[i-1]*DeltaTime;
             
 
-            DotState_AgingLaw( ListOfParameters, SlipRate[i], Theta, &ThetaDot);
-            theta_o = Theta + ThetaDot*DeltaTime;
+            DotState_AgingLaw( ListOfParameters, SlipRate[i], theta_o, &ThetaDot);
+            theta_o = theta_o + ThetaDot*DeltaTime;
             
-            FricRS(&Fric[i], SlipRate[i], Theta, ListOfParameters);
-            EvalRateStateFriction(&Tau[i], sigma_n, SlipRate[i], Theta, ListOfParameters);
-            fprintf(fp, "%f ; %f ; %f ; %f ; %f\n", time[i], Tau[i], Slip[i], SlipRate[i], Fric[i]);
+            FricRS(&Fric[i], SlipRate[i], theta_o, ListOfParameters);
+            EvalRateStateFriction(&Tau[i], sigma_n, SlipRate[i], theta_o, ListOfParameters);
+            fprintf(fp, "%f ; %f ; %f ; %f ; %f ; %f \n", time[i], Tau[i], Slip[i], SlipRate[i], Fric[i], theta_o);
         }
         fclose(fp);
     }
@@ -118,12 +118,12 @@ int main(int nargs,char *args[])
             Slip[i] = Slip[i-1] + SlipRate[i-1]*DeltaTime;
             
 
-            DotState_SlipLaw( ListOfParameters, SlipRate[i], Theta, &ThetaDot);
-            theta_o = Theta + ThetaDot*DeltaTime;
+            DotState_SlipLaw( ListOfParameters, SlipRate[i], theta_o, &ThetaDot);
+            theta_o = theta_o + ThetaDot*DeltaTime;
             
-            FricRS(&Fric[i], SlipRate[i], Theta, ListOfParameters);
-            EvalRateStateFriction(&Tau[i], sigma_n, SlipRate[i], Theta, ListOfParameters);
-            fprintf(fp, "%f ; %f ; %f ; %f ; %f\n", time[i], Tau[i], Slip[i], SlipRate[i], Fric[i]);
+            FricRS(&Fric[i], SlipRate[i], theta_o, ListOfParameters);
+            EvalRateStateFriction(&Tau[i], sigma_n, SlipRate[i], theta_o, ListOfParameters);
+            fprintf(fp, "%f ; %f ; %f ; %f ; %f ; %f \n", time[i], Tau[i], Slip[i], SlipRate[i], Fric[i], theta_o);
         }
         fclose(fp);
     }
@@ -136,12 +136,12 @@ int main(int nargs,char *args[])
             Slip[i] = Slip[i-1] + SlipRate[i-1]*DeltaTime;
             
 
-            DotState_PerrinRiceZhengLaw( ListOfParameters, SlipRate[i], Theta, &ThetaDot);
-            theta_o = Theta + ThetaDot*DeltaTime;
+            DotState_PerrinRiceZhengLaw( ListOfParameters, SlipRate[i], theta_o, &ThetaDot);
+            theta_o = theta_o + ThetaDot*DeltaTime;
             
-            FricRS(&Fric[i], SlipRate[i], Theta, ListOfParameters);
-            EvalRateStateFriction(&Tau[i], sigma_n, SlipRate[i], Theta, ListOfParameters);
-            fprintf(fp, "%f ; %f ; %f ; %f ; %f\n", time[i], Tau[i], Slip[i], SlipRate[i], Fric[i]);
+            FricRS(&Fric[i], SlipRate[i], theta_o, ListOfParameters);
+            EvalRateStateFriction(&Tau[i], sigma_n, SlipRate[i], theta_o, ListOfParameters);
+            fprintf(fp, "%f ; %f ; %f ; %f ; %f ; %f \n", time[i], Tau[i], Slip[i], SlipRate[i], Fric[i], theta_o);
         }
         fclose(fp);
     }
