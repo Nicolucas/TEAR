@@ -134,7 +134,7 @@ int main(int nargs,char *args[])
         {
             RectFunction(&SlipRate[i], ListOfParameters[3], i, 200, 300, 0.002);
             Slip[i] = Slip[i-1] + SlipRate[i-1]*DeltaTime;
-            printf("%f\n",SlipRate[i]);
+
 
             DotState_PerrinRiceZhengLaw( ListOfParameters, SlipRate[i], theta_o, &ThetaDot);
             theta_o = theta_o + ThetaDot*DeltaTime;

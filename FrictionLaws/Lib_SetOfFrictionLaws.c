@@ -138,21 +138,23 @@ void EvalModRateStateFriction(double Tau[], double sigma_n[], double Sdot, doubl
 /**
  * Aging law
  * \Dot{\theta} = 1 - (\Dot{S} / L) \theta 
- * --> 
- * \theta(\theta_o, \Dot{S}, t) = C * exp(-\Dot{S} * t / L) + L / \Dot{S}
 */
 void DotState_AgingLaw(double ListOfParameters[], double Sdot, double Theta, double* ThetaDot)
 {
-    double D_c = ListOfParameters[4]; //Length scale
+    double D_c = ListOfParameters[4]; //Critical Slip weakening Distance
 
     PositiveValueControl(Sdot);
     PositiveValueControl(Theta);
     ThetaDot[0] = 1.0 - Theta * Sdot / D_c ; 
 }
 
+/**
+ * Aging law
+ * \theta(\theta_o, \Dot{S}, t) = C * exp(-\Dot{S} * t / L) + L / \Dot{S}
+*/
 void State_AgingLaw(double theta_o, double Sdot, double ListOfParameters[], double time,double* Theta)
 {
-    double D_c = ListOfParameters[4]; //Length scale
+    double D_c = ListOfParameters[4]; //Critical Slip weakening Distance
     double C;
 
     PositiveValueControl(Sdot);
@@ -163,21 +165,28 @@ void State_AgingLaw(double theta_o, double Sdot, double ListOfParameters[], doub
 } 
 
 
-
+/**
+ * Slip law
+ * \Dot{\theta} = - (\Dot{S} / L) \theta * ln((\Dot{S} / L) \theta) 
+*/
 void DotState_SlipLaw(double ListOfParameters[], double Sdot, double Theta, double* ThetaDot)
 {
-    double D_c = ListOfParameters[4]; //Length scale
+    double D_c = ListOfParameters[4]; //Critical Slip weakening Distance
 
     PositiveValueControl(Sdot);
     PositiveValueControl(Theta);
     ThetaDot[0] =  - (Theta * Sdot / D_c) * log(Theta * Sdot / D_c); 
 }
 
+/**
+ * PRZ law
+ * \Dot{\theta} = 1 - ((\Dot{S} / L) \theta )**2
+*/
 void DotState_PerrinRiceZhengLaw(double ListOfParameters[], double Sdot, double Theta, double* ThetaDot)
 {
-    double D_c = ListOfParameters[4]; //Length scale
+    double D_c = ListOfParameters[4]; //Critical Slip weakening Distance
 
     PositiveValueControl(Sdot);
     PositiveValueControl(Theta);
-    ThetaDot[0] = 1.0 - Theta * Sdot /(2.0 * D_c); 
+    ThetaDot[0] = 1.0 - pow((Theta * Sdot /(2.0 * D_c)),2.0); 
 }
