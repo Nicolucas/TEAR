@@ -40,7 +40,7 @@ int main(int nargs,char *args[])
     SlipRate[0]=ListOfParameters[3];
     time[0] = 0.0;
 
-    { // SW Test
+    { // LSW Test
         fp = fopen("./Output/TestLSW.txt","w+");
         for (i=1; i<1000; i++)
         {
