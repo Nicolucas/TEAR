@@ -127,7 +127,7 @@ int main(int nargs,char *args[])
         }
         fclose(fp);
     }
-    theta_o=theta_oo;
+    theta_o=theta_oo*2;
     { // SR Updating Theta Test - PRZ Law
         fp = fopen("./Output/TestRS_PRZLaw.txt","w+");
         for (i=1; i<1000; i++)
