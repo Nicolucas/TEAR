@@ -12,6 +12,9 @@ void FricModRS(double Fric[], double Sdot, double Theta, double ListOfParameters
 void EvalModRateStateFriction(double Tau[], double sigma_n[], double Sdot, double Theta, double ListOfParameters[]);
 void DotState_AgingLaw(double ListOfParameters[], double Sdot, double Theta, double* ThetaDot);
 void State_AgingLaw(double theta_o, double Sdot, double ListOfParameters[], double time,double* Theta);
+void DotState_SlipLaw(double ListOfParameters[], double Sdot, double Theta, double* ThetaDot);
+void DotState_PerrinRiceZhengLaw(double ListOfParameters[], double Sdot, double Theta, double* ThetaDot);
+
 
 
 #endif
