@@ -23,6 +23,7 @@ int main(int nargs,char *args[])
     double mu_s = 0.6, mu_d = 0.3, D_c = 0.01;
     double sigma_n[3];
     int i,j;
+    double ThetaDot;
 
     double DeltaTime = 0.1;
     double DeltaSlip = 0.0002;
@@ -40,7 +41,7 @@ int main(int nargs,char *args[])
     time[0] = 0.0;
 
     { // SW Test
-        fp = fopen("./Output/TestSW.txt","w+");
+        fp = fopen("./Output/TestLSW.txt","w+");
         for (i=1; i<1000; i++)
         {
             Slip[i] = Slip[i-1] + SlipRate[0]*DeltaTime;
@@ -57,7 +58,7 @@ int main(int nargs,char *args[])
 
     theta_oo=theta_o;
     { // SR Test
-        fp = fopen("./Output/TestSR.txt","w+");
+        fp = fopen("./Output/TestRS_HealingLaw_NoThetaUp.txt","w+");
         for (i=1; i<1000; i++)
         {
             RectFunction(&SlipRate[i], ListOfParameters[3], i, 200, 300, 0.002);
@@ -75,7 +76,7 @@ int main(int nargs,char *args[])
     }
     theta_o=theta_oo;
     { // ModSR Test
-        fp = fopen("./Output/TestModSR.txt","w+");
+        fp = fopen("./Output/TestModRS_HealingLaw.txt","w+");
         for (i=1; i<1000; i++)
         {
 
@@ -84,6 +85,62 @@ int main(int nargs,char *args[])
             
             FricModRS(&Fric[i], SlipRate[i], Theta, ListOfParameters);
             EvalModRateStateFriction(&Tau[i], sigma_n, SlipRate[i], Theta, ListOfParameters);
+            fprintf(fp, "%f ; %f ; %f ; %f ; %f\n", time[i], Tau[i], Slip[i], SlipRate[i], Fric[i]);
+        }
+        fclose(fp);
+    }
+
+    theta_o=theta_oo;
+    { // SR Updating Theta Test - Healing Law
+        fp = fopen("./Output/TestRS_HealingLaw.txt","w+");
+        for (i=1; i<1000; i++)
+        {
+            RectFunction(&SlipRate[i], ListOfParameters[3], i, 200, 300, 0.002);
+            Slip[i] = Slip[i-1] + SlipRate[i-1]*DeltaTime;
+            
+
+            DotState_AgingLaw( ListOfParameters, SlipRate[i], Theta, &ThetaDot);
+            theta_o = Theta + ThetaDot*DeltaTime;
+            
+            FricRS(&Fric[i], SlipRate[i], Theta, ListOfParameters);
+            EvalRateStateFriction(&Tau[i], sigma_n, SlipRate[i], Theta, ListOfParameters);
+            fprintf(fp, "%f ; %f ; %f ; %f ; %f\n", time[i], Tau[i], Slip[i], SlipRate[i], Fric[i]);
+        }
+        fclose(fp);
+    }
+
+    theta_o=theta_oo;
+    { // SR Updating Theta Test - Slip Law
+        fp = fopen("./Output/TestRS_SlipLaw.txt","w+");
+        for (i=1; i<1000; i++)
+        {
+            RectFunction(&SlipRate[i], ListOfParameters[3], i, 200, 300, 0.002);
+            Slip[i] = Slip[i-1] + SlipRate[i-1]*DeltaTime;
+            
+
+            DotState_SlipLaw( ListOfParameters, SlipRate[i], Theta, &ThetaDot);
+            theta_o = Theta + ThetaDot*DeltaTime;
+            
+            FricRS(&Fric[i], SlipRate[i], Theta, ListOfParameters);
+            EvalRateStateFriction(&Tau[i], sigma_n, SlipRate[i], Theta, ListOfParameters);
+            fprintf(fp, "%f ; %f ; %f ; %f ; %f\n", time[i], Tau[i], Slip[i], SlipRate[i], Fric[i]);
+        }
+        fclose(fp);
+    }
+    theta_o=theta_oo;
+    { // SR Updating Theta Test - PRZ Law
+        fp = fopen("./Output/TestRS_PRZLaw.txt","w+");
+        for (i=1; i<1000; i++)
+        {
+            RectFunction(&SlipRate[i], ListOfParameters[3], i, 200, 300, 0.002);
+            Slip[i] = Slip[i-1] + SlipRate[i-1]*DeltaTime;
+            
+
+            DotState_PerrinRiceZhengLaw( ListOfParameters, SlipRate[i], Theta, &ThetaDot);
+            theta_o = Theta + ThetaDot*DeltaTime;
+            
+            FricRS(&Fric[i], SlipRate[i], Theta, ListOfParameters);
+            EvalRateStateFriction(&Tau[i], sigma_n, SlipRate[i], Theta, ListOfParameters);
             fprintf(fp, "%f ; %f ; %f ; %f ; %f\n", time[i], Tau[i], Slip[i], SlipRate[i], Fric[i]);
         }
         fclose(fp);
