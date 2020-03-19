@@ -11,15 +11,15 @@
 void Displacement(double x, double y, double t, double DispVect[], double Grad[], double VelocityVect[])
 {
   DispVect[0] = exp(2.0*x)*exp(5.0*t);
-  DispVect[1] = exp(-10.0*y)*exp(3.0*x);
+  DispVect[1] = exp(-10.0*y)*exp(-3.0*x);
 
   VelocityVect[0] = 5.0*exp(2.0*x)*exp(5.0*t);
   VelocityVect[1] = 0.0;  
 
   Grad[0] = 2.0*exp(2.0*x)*exp(5.0*t); //DU_1/Dx
-  Grad[1] = -10.0*exp(-10.0*y); //DU_2/Dy
-  Grad[2] = 3.0*exp(-10.0*y)*exp(3.0*x); //DU_2/Dx
-  Grad[3] = -10.0*exp(-10.0*y)*exp(3.0*x); //DU_1/Dy
+  Grad[1] = -10.0*exp(-10.0*y)*exp(-3.0*x); //DU_2/Dy
+  Grad[2] = -3.0*exp(-10.0*y)*exp(-3.0*x); //DU_2/Dx
+  Grad[3] = 0.0; //DU_1/Dy
 }
 
 void Slip(double DispVect[],double *Slip)
@@ -98,9 +98,10 @@ void DoTheEvolution(double loc[],double delta, double displacement[],double *Sli
   /**
    * Step 3.2 Get tau and compare with 
   */
+  
   GetFaultTraction(sigma, Tangent,Normal, TauC, &Traction[0], &UpdateStress);
   sigma[2]=Traction[0];
-  printf("Tau_c: %f - Traction: %f\n",TauC , Traction[0]);
+  printf("Time: %f - Tau_c: %f - Traction: %f\n",time ,TauC , Traction[0]);
   if(UpdateStress)
   {
     printf("Its Happening!\n");
@@ -112,7 +113,6 @@ void DoTheEvolution(double loc[],double delta, double displacement[],double *Sli
   
   DotState_AgingLaw(ListOfParameters, SlipDot[0], ThetaHalf, &ThetaDot);
   PartialUpScalar(ThetaHalf, Theta, deltaTime, SlipDot[0]);
-  
 }
 
 
@@ -138,7 +138,7 @@ int main(int nargs,char *args[])
     ListOfParameters[0] = 0.011 ;
     ListOfParameters[1] = 0.016;
     ListOfParameters[2] = 0.01;
-    ListOfParameters[3] = 4.0 * pow(10.0,-9.0);//deltaSlip/(2.0*deltaTime); //
+    ListOfParameters[3] = deltaSlip/(2.0*deltaTime); //4.0 * pow(10.0,-5.0);//
     ListOfParameters[4] = D_c;
 
 
@@ -164,7 +164,7 @@ int main(int nargs,char *args[])
       time += deltaTime;
       DoTheEvolution(loc, delta, displacement, &Slip, deltaTime, time, deltaSlip, ListOfParameters, &Theta_o, &Tau);
 
-      fprintf(fp, "%f ; %f ; %f \n", time, Tau, Slip);
+      fprintf(fp, "%f ; %f ; %f ; %f\n", time, Tau, Slip, Theta_o);
     }
     fclose(fp);
     return(0);
