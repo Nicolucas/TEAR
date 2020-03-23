@@ -15,6 +15,23 @@ void RectFunction(double Y[], double y_o, double x, double x1, double x2, double
     }
 }
 
+void RectFunction(double Y[], double y_o, double x, double x1, double x2, double Amplitude)
+{
+    if (x > x1 && x < x2)
+    {
+        Y[0] = y_o + Amplitude;
+    } else {
+        Y[0] = y_o;
+    }
+}
+
+
+void PrescribedFunction(double Y[], double y_o, double x, double x1, double x2, double Amplitude)
+{
+    Y[0] = x*Amplitude + y_o;
+
+}
+
 
 int main(int nargs,char *args[])
 {
@@ -25,25 +42,27 @@ int main(int nargs,char *args[])
     int i;
     double ThetaDot;
 
-    double DeltaTime = 0.1;
+    double DeltaTime = 0.01;
     double DeltaSlip = 0.0002;
      
 
-    double ListOfParameters[5] = {0.011, 0.016, 0.2, DeltaSlip/(2.0*DeltaTime), D_c};
+    double ListOfParameters[5] = {0.011, 0.016, 0.2, DeltaSlip / (2.0*DeltaTime), D_c};
     
     double Theta, theta_oo, theta_o;
     
-    theta_o = D_c/(ListOfParameters[3]);
+    theta_o = D_c / (ListOfParameters[3]);
     
-    sigma_n[0] = 10, sigma_n[1] = 5, sigma_n[2] = 2;
-    Slip[0]=0.001;
-    SlipRate[0]=ListOfParameters[3];
+    sigma_n[0] = -10, sigma_n[1] = -5, sigma_n[2] = -2;
+    Slip[0] = 0.001;
+    SlipRate[0] = ListOfParameters[3];
     time[0] = 0.0;
 
     { // LSW Test
         fp = fopen("./Output/TestLSW.txt","w+");
+        printf("--> LSW Test\n");
+
         for (i=1; i<1000; i++)
-        {
+        {   
             Slip[i] = Slip[i-1] + SlipRate[0]*DeltaTime;
             time[i] = DeltaTime + time[i-1];
             SlipRate[i] = (Slip[i] - Slip[i-1])/DeltaTime;
@@ -57,11 +76,13 @@ int main(int nargs,char *args[])
     
 
     theta_oo=theta_o;
-    { // SR Test
+    { // RS Test
         fp = fopen("./Output/TestRS_HealingLaw_NoThetaUp.txt","w+");
+        printf("--> LRS Test\n");
+
         for (i=1; i<1000; i++)
         {
-            RectFunction(&SlipRate[i], ListOfParameters[3], i, 200, 300, 0.002);
+            PrescribedFunction(&SlipRate[i], ListOfParameters[3], i, 200, 300, 0.002);
             Slip[i] = Slip[i-1] + SlipRate[i-1]*DeltaTime;
             
 
@@ -75,8 +96,9 @@ int main(int nargs,char *args[])
         fclose(fp);
     }
     theta_o=theta_oo;
-    { // ModSR Test
+    { // ModRS Test
         fp = fopen("./Output/TestModRS_HealingLaw.txt","w+");
+        printf("--> ModRS Test\n");
         for (i=1; i<1000; i++)
         {
 
@@ -93,15 +115,16 @@ int main(int nargs,char *args[])
     theta_o=theta_oo;
     { // SR Updating Theta Test - Healing Law
         fp = fopen("./Output/TestRS_HealingLaw.txt","w+");
+        printf("--> RS-Healing Law Test\n");
         for (i=1; i<1000; i++)
         {
-            RectFunction(&SlipRate[i], ListOfParameters[3], i, 200, 300, 0.002);
+            PrescribedFunction(&SlipRate[i], ListOfParameters[3], i, 200, 300, 0.002);
             Slip[i] = Slip[i-1] + SlipRate[i-1]*DeltaTime;
             
-
+            
             DotState_AgingLaw( ListOfParameters, SlipRate[i], theta_o, &ThetaDot);
             theta_o = theta_o + ThetaDot*DeltaTime;
-            
+
             FricRS(&Fric[i], SlipRate[i], theta_o, ListOfParameters);
             EvalRateStateFriction(&Tau[i], sigma_n, SlipRate[i], theta_o, ListOfParameters);
             fprintf(fp, "%f ; %f ; %f ; %f ; %f ; %f \n", time[i], Tau[i], Slip[i], SlipRate[i], Fric[i], theta_o);
@@ -112,9 +135,10 @@ int main(int nargs,char *args[])
     theta_o=theta_oo;
     { // SR Updating Theta Test - Slip Law
         fp = fopen("./Output/TestRS_SlipLaw.txt","w+");
+        printf("--> RS-Slip Law Test\n");
         for (i=1; i<1000; i++)
         {
-            RectFunction(&SlipRate[i], ListOfParameters[3], i, 200, 300, 0.002);
+            PrescribedFunction(&SlipRate[i], ListOfParameters[3], i, 200, 300, 0.002);
             Slip[i] = Slip[i-1] + SlipRate[i-1]*DeltaTime;
             
 
@@ -130,9 +154,10 @@ int main(int nargs,char *args[])
     theta_o=theta_oo*2;
     { // SR Updating Theta Test - PRZ Law
         fp = fopen("./Output/TestRS_PRZLaw.txt","w+");
+        printf("--> RS-PRZ Law Test\n");
         for (i=1; i<1000; i++)
         {
-            RectFunction(&SlipRate[i], ListOfParameters[3], i, 200, 300, 0.002);
+            PrescribedFunction(&SlipRate[i], ListOfParameters[3], i, 200, 300, 0.002);
             Slip[i] = Slip[i-1] + SlipRate[i-1]*DeltaTime;
 
 
