@@ -23,7 +23,7 @@ DemoStress: $(OBJ) DemoStress.o
 
 %.o: %.c $(HDR)
 	-@echo "---- Compiling $*.c -----"
-	$(CC) $(CFLAGS) -c $*.c $(INC)
+	$(CC) $(CFLAGS) -c -o $*.o $*.c $(INC)
 
 
 clean:
