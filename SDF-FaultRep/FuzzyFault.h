@@ -16,4 +16,8 @@ void CalcSlipRate(double VelPlus[], double VelMinus[],double PhiPlus,double PhiM
 void LocateInFault(double loc[], bool LocInFault,double GradPhi[], double PhiEval,double delta, double PostLocation[]);
 void EvaluateSlipRateAtPoint(double coor[],double delta,double *sdot);
 
+void NormalVecGetTangentVec(double n[], double t[]);
+void VecDot(double x[], double y[], double *d);
+void VecMag(double x[], double *m);
+
 #endif
