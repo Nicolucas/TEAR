@@ -20,4 +20,6 @@ void NormalVecGetTangentVec(double n[], double t[]);
 void VecDot(double x[], double y[], double *d);
 void VecMag(double x[], double *m);
 
+
+
 #endif
