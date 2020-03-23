@@ -3,16 +3,16 @@
 #include <math.h>
 #include <stdlib.h>
 #include "Lib_SetOfFrictionLaws.h"
-#define getVarName(var)  #var 
+
 
 /**
  * Checking if the value is positive. Otherwise, the program comes to a halt.
 */
-void PositiveValueControl(double Variable)
+void PositiveValueControl(double Variable, char VarName[])
 {
   if (Variable < 0.0) 
   {
-    printf("Error[%s]: Variable [%s] is not positive. Terminating Program\n",__FUNCTION__,getVarName(Variable));
+    printf("Error[%s]: Variable [%s] is not positive. Terminating Program\n",__FUNCTION__,VarName);
     exit(1);
   }
 }
@@ -51,7 +51,7 @@ void EvalStaticDynamic(double Tau[], double sigma[], double mu)
 
 void FricSW(double *Fric, double mu_s, double mu_d, double D_c, double *Slip)
 {
-    PositiveValueControl(Slip[0]);
+    PositiveValueControl(Slip[0],"Slip");
     if (Slip[0] < D_c)
     {
         Fric[0] = (mu_s - (mu_s - mu_d) * Slip[0] / D_c);
@@ -64,9 +64,9 @@ void EvalSlipWeakening(double Tau[], double sigma_n[], double mu_s, double mu_d,
 {
     double Fric;
     
-    PositiveValueControl(Slip[0]);
+    PositiveValueControl(Slip[0],"Slip");
     FricSW(&Fric, mu_s, mu_d, D_c, Slip);
-    Tau[0] = sigma_n[0] * Fric;
+    Tau[0] = - sigma_n[0] * Fric;
 }
 
 /**
@@ -84,7 +84,7 @@ void FricRS(double *Fric, double Sdot, double Theta, double ListOfParameters[])
     double V_o = ListOfParameters[3]; // Ref. slip Velocity
     double D_c = ListOfParameters[4]; // Length scale
 
-    PositiveValueControl(Sdot);
+    PositiveValueControl(Sdot, "SlipRate");
 
     Fric[0] = mu_o + a * logf(Sdot / V_o) + b * log((V_o * Theta) / D_c);
 }
@@ -92,12 +92,12 @@ void EvalRateStateFriction(double Tau[], double sigma_n[], double Sdot, double T
 {
     double Fric;
 
-    PositiveValueControl(Sdot);
-    PositiveValueControl(Theta);
+    PositiveValueControl(Sdot, "SlipRate");
+    PositiveValueControl(Theta, "Theta");
     
     FricRS(&Fric, Sdot, Theta, ListOfParameters);
-    Tau[0] = sigma_n[0] * Fric;
-    PositiveValueControl(Tau[0]);
+    Tau[0] = - sigma_n[0] * Fric;
+    PositiveValueControl(Tau[0], "Tau");
 }
 
 /**
@@ -115,8 +115,8 @@ void FricModRS(double Fric[], double Sdot, double Theta, double ListOfParameters
     double V_o = ListOfParameters[3]; // Ref. slip Velocity
     double D_c = ListOfParameters[4]; // Length scale
 
-    PositiveValueControl(Sdot);
-    PositiveValueControl(Theta);
+    PositiveValueControl(Sdot,"SlipRate");
+    PositiveValueControl(Theta, "Theta");
     Fric[0] = a * asinhf(( Sdot / (2.0 * V_o)) * expf((mu_o + b * log(V_o * Theta / D_c)) / a));
 }
 
@@ -124,10 +124,10 @@ void EvalModRateStateFriction(double Tau[], double sigma_n[], double Sdot, doubl
 {
     double Fric;
 
-    PositiveValueControl(Sdot);
-    PositiveValueControl(Theta);
+    PositiveValueControl(Sdot,"SlipRate");
+    PositiveValueControl(Theta, "Theta");
     FricModRS(&Fric, Sdot, Theta, ListOfParameters);
-    Tau[0] = sigma_n[0] * Fric;
+    Tau[0] = - sigma_n[0] * Fric;
 }
 
 
@@ -143,8 +143,8 @@ void DotState_AgingLaw(double ListOfParameters[], double Sdot, double Theta, dou
 {
     double D_c = ListOfParameters[4]; //Critical Slip weakening Distance
 
-    PositiveValueControl(Sdot);
-    PositiveValueControl(Theta);
+    PositiveValueControl(Sdot,"SlipRate");
+    PositiveValueControl(Theta, "Theta");
     ThetaDot[0] = 1.0 - Theta * Sdot / D_c ; 
 }
 
@@ -157,11 +157,11 @@ void State_AgingLaw(double theta_o, double Sdot, double ListOfParameters[], doub
     double D_c = ListOfParameters[4]; //Critical Slip weakening Distance
     double C;
 
-    PositiveValueControl(Sdot);
+    PositiveValueControl(Sdot,"SlipRate");
     
     C = theta_o - D_c / Sdot;
     Theta[0] = C * expf(-Sdot * time / D_c) + D_c / Sdot;  // Actually this only would be the case if Sdot was constant
-    PositiveValueControl(Theta[0]);
+    PositiveValueControl(Theta[0], "Theta");
 } 
 
 
@@ -173,8 +173,8 @@ void DotState_SlipLaw(double ListOfParameters[], double Sdot, double Theta, doub
 {
     double D_c = ListOfParameters[4]; //Critical Slip weakening Distance
 
-    PositiveValueControl(Sdot);
-    PositiveValueControl(Theta);
+    PositiveValueControl(Sdot,"SlipRate");
+    PositiveValueControl(Theta, "Theta");
     ThetaDot[0] =  - (Theta * Sdot / D_c) * log(Theta * Sdot / D_c); 
 }
 
@@ -186,7 +186,7 @@ void DotState_PerrinRiceZhengLaw(double ListOfParameters[], double Sdot, double 
 {
     double D_c = ListOfParameters[4]; //Critical Slip weakening Distance
 
-    PositiveValueControl(Sdot);
-    PositiveValueControl(Theta);
+    PositiveValueControl(Sdot,"SlipRate");
+    PositiveValueControl(Theta, "Theta");
     ThetaDot[0] = 1.0 - pow((Theta * Sdot /(2.0 * D_c)),2.0); 
 }
