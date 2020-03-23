@@ -29,18 +29,17 @@ void SlipFun(double DispVect[], double Tangent[], double *Slip)
 }
 void SlipRate(double VelVect[], double Tangent[], double *SlipDot)
 {
-  SlipDot[0] = VelVect[0]*Tangent[0]+VelVect[1]*Tangent[1];
+  SlipDot[0] = VelVect[0]*Tangent[0] + VelVect[1]*Tangent[1];
 }
 
 
-void DoTheEvolution(double loc[],double delta, double displacement[],double *Slip, double deltaTime, double time, double deltaSlip, double ListOfParameters[], double *Theta, double *Traction, double *VarFric)
+void DoTheEvolution(double loc[],double delta, double displacement[],double *Slip, double deltaTime, double time, double deltaSlip, double ListOfParameters[], double *Theta, double *Traction, double *VarFric, double *SlipDot)
 {
   double Normal[2];
   double Tangent[2];
   double velocity[2];
   //double displacementHalf[2];
-  double SlipHalf=0.0, ThetaHalf=0.0, ThetaDot;
-  double SlipDot;
+  double SlipHalf, ThetaHalf, ThetaDot;
   
 
 
@@ -59,10 +58,9 @@ void DoTheEvolution(double loc[],double delta, double displacement[],double *Sli
   //EvalVelocity(loc,velocity);
 
   Displacement( loc[0],  loc[1],  time + deltaTime/2.0,  displacement,  Grad,  velocity);
-  SlipDot=velocity[0];
 
   SlipFun( displacement,  Tangent, &SlipHalf);
-  SlipRate( velocity,  Tangent, &SlipDot);
+  SlipRate( velocity,  Tangent, &SlipDot[0]);
 
   /**
    * Step 1. Displacement update 
@@ -82,8 +80,9 @@ void DoTheEvolution(double loc[],double delta, double displacement[],double *Sli
 
   //PartialUpScalar(Slip[0], &SlipHalf,deltaTime,SlipDot[0]);
 
-  DotState_AgingLaw(ListOfParameters, SlipDot, Theta[0], &ThetaDot);
-  
+  DotState_AgingLaw(ListOfParameters, SlipDot[0], Theta[0], &ThetaDot);
+
+
   PartialUpScalar(Theta[0], &ThetaHalf, deltaTime,ThetaDot);
 
   /**
@@ -99,17 +98,14 @@ void DoTheEvolution(double loc[],double delta, double displacement[],double *Sli
   /**
    * Step 3.1 Calculate Tau_Critical
   */
-  CompTauCritic(sigma, SlipDot, ThetaHalf, ListOfParameters, Normal, &TauC, VarFric);
-  printf("Friction: %f \n",VarFric[0]);
-  //VarFri[0]=VarFric;
-
+  CompTauCritic(sigma, SlipDot[0], ThetaHalf, ListOfParameters, Normal, &TauC, VarFric);
   /**
    * Step 3.2 Get tau and compare with 
   */
   
   GetFaultTraction(sigma, Tangent,Normal, TauC, Traction, &UpdateStress);
   sigma[2] = Traction[0];
-  printf("Time: %f - Tau_c: %f - Traction: %f\n",time ,TauC , Traction[0]);
+  printf("Time: %f - Tau_c: %f - Traction: %f - Friction: %f \n",time ,TauC , Traction[0], VarFric[0]);
   if(UpdateStress)
   {
     printf("Its Happening!\n");
@@ -119,8 +115,11 @@ void DoTheEvolution(double loc[],double delta, double displacement[],double *Sli
   */
   GetSlipFromTraction(delta, G, UpdateStress, Traction[0], TauC, SlipHalf, Slip);
   
-  DotState_AgingLaw(ListOfParameters, SlipDot, ThetaHalf, &ThetaDot);
-  PartialUpScalar(ThetaHalf, &Theta, deltaTime, SlipDot);
+  //SlipDot[0] = (Slip[0] - SlipHalf)/(0.5*deltaTime); 
+
+  DotState_AgingLaw(ListOfParameters, SlipDot[0], ThetaHalf, &ThetaDot);
+
+  PartialUpScalar(ThetaHalf, &Theta[0], deltaTime/2.0, SlipDot[0]);
 }
 
 
@@ -134,20 +133,21 @@ int main(int nargs,char *args[])
     double delta;
     double Tau;
     double VarFr;
+    double SlipDot;
 
     double deltaTime, deltaSlip, Theta_o;
     double ListOfParameters[5];
-    double time = 0.001;
+    double time = 0.0;
     int i;
 
-    deltaTime = 0.0001; 
-    deltaSlip = 0.00005;
+    deltaTime = 0.001; 
+    deltaSlip = 0.005;
     // Unpacking ListOfParameters = [a, b, mu_o, V_o, L]
     ListOfParameters[0] = 0.011 ;
     ListOfParameters[1] = 0.016;
-    ListOfParameters[2] = 0.48;
-    ListOfParameters[3] = deltaSlip/(2.0*deltaTime); //4.0 * pow(10.0,-9.0);//
-    ListOfParameters[4] = deltaSlip;
+    ListOfParameters[2] = 0.54;
+    ListOfParameters[3] = 1.0 * pow(10.0,-1.0);//deltaSlip/(2.0*deltaTime); //
+    ListOfParameters[4] = 0.01;
 
 
 
@@ -157,7 +157,7 @@ int main(int nargs,char *args[])
     
 
 
-    Theta_o=ListOfParameters[4]/ListOfParameters[3] ;
+Theta_o=ListOfParameters[4]/ListOfParameters[3] *exp(-1.0);
 
     fp = fopen("./Output/Drama.txt","w+");
 
@@ -168,9 +168,9 @@ int main(int nargs,char *args[])
     for (i=1; i<1000; i++)
     {
       time += deltaTime;
-      DoTheEvolution(loc, delta, displacement, &Slip, deltaTime, time, deltaSlip, ListOfParameters, &Theta_o, &Tau, &VarFr);
-
-      fprintf(fp, "%f ; %f ; %f ; %f ; %f \n", time, Tau, Slip, Theta_o, VarFr);
+      DoTheEvolution(loc, delta, displacement, &Slip, deltaTime, time, deltaSlip, ListOfParameters, &Theta_o, &Tau, &VarFr, &SlipDot);
+      
+      fprintf(fp, "%f ; %f ; %f ; %f ; %f ; %f \n", time, Tau, Slip, Theta_o, VarFr, SlipDot);
     }
     fclose(fp);
     return(0);
