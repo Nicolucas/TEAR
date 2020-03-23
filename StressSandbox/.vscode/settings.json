@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "lib_minivoigt.h": "c",
+        "lib_newmarkts.h": "c"
+    }
+}
