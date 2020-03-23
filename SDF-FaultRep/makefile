@@ -25,7 +25,7 @@ sdfdemo1: $(OBJ) demo2.o
 
 %.o: %.c $(HDR)
 	-@echo "---- Compiling $*.c -----"
-	$(CC) $(CFLAGS) -c $*.c $(INC)
+	$(CC) $(CFLAGS) -c -o $*.o $*.c $(INC)
 
 clean:
 	-@rm -rf *.o
