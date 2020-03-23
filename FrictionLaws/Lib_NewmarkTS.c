@@ -20,20 +20,20 @@ void CalcSigmaComponent(double Sigma[],double n_i[], double n_j[], double *Sigma
     SigmaScalar[0] = Sigma[0]*n_i[0]*n_j[0] + Sigma[1]*n_i[1]*n_j[1] + Sigma[2]*n_i[1]*n_j[0] + Sigma[2]*n_i[0]*n_j[1];
 }
 
-void CompTauCritic(double Sigma[], double Sdot, double Theta, double ListOfParameters[], double n[], double *TauC)
+void CompTauCritic(double Sigma[], double Sdot, double Theta, double ListOfParameters[], double n[], double *TauC, double *Friction)
 {
-    double Fric;
+    
     double SigmaN;
 
 
-    FricRS(&Fric, Sdot, Theta, ListOfParameters);
+    FricRS(Friction, Sdot, Theta, ListOfParameters);
     CalcSigmaComponent(Sigma, n, n, &SigmaN);
 
     TauC[0] = 0.0;
 
     if(SigmaN<0.0)
     {
-        TauC[0] = - SigmaN * Fric;
+        TauC[0] = - SigmaN * Friction[0];
     }
 }
 
