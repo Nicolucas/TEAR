@@ -7,20 +7,19 @@
 #include "../FrictionLaws/Lib_NewmarkTS.h"
 #include "../FrictionLaws/Lib_SetOfFrictionLaws.h"
 #include "Lib_MiniVoigt.h"
+#include "Lib_DisplacementFunctions.h"
 
 
 void Displacement(double x, double y, double t, double DispVect[], double Grad[], double VelocityVect[])
 {
-  DispVect[0] = exp(-x - y) - exp(y)*pow(t,2.0);
-  DispVect[1] = exp(-y - x);
+  void (*PresFunArray[])(double, double, double, double[], double[], double[]) =\
+    {RectDisplacementFunc, LinearDisplacementFunc,ExpDisplacementFunc};
+    
+    int FuncNo = 1;
 
-  VelocityVect[0] = - exp(y)*t*2.0;
-  VelocityVect[1] = 0.0;  
-
-  Grad[0] = -exp(-x - y); //DU_1/Dx
-  Grad[1] = -exp(-x - y); //DU_2/Dy
-  Grad[2] = -exp(-x - y) - exp(y)*pow(t,2.0); //DU_1/Dy
-  Grad[3] = -exp(-x - y); //DU_2/Dx
+    if (FuncNo > 2) exit(1);
+    
+    (*PresFunArray[FuncNo])(x, y, t, DispVect, Grad, VelocityVect);
 }
 
 void SlipFun(double DispVect[], double Tangent[], double *Slip)
