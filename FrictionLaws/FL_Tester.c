@@ -12,7 +12,12 @@ void LinearIncreaseFunction(double Y[], double y_o, double x, double x1, double 
 
 void ExponentialIncreaseFunction(double Y[], double y_o, double x, double x1, double x2, double Amplitude)
 {
-    Y[0] = pow(x,2.0)*Amplitude + y_o;
+    if (x > x1 && x < x2)
+    {
+        Y[0] = pow(x,2.0)*Amplitude/1000.0 + y_o;
+    } else {
+        Y[0] = y_o;
+    }
 }
 
 
@@ -30,7 +35,7 @@ void SawFunction(double Y[], double y_o, double x, double x1, double x2, double 
 {
     if (x > x1 && x < x2)
     {
-        Y[0] = y_o + Amplitude;
+        Y[0] = y_o + x*Amplitude/1000.0;
     } else {
         Y[0] = y_o;
     }
@@ -43,7 +48,7 @@ void PrescribedFunction(double Y[], double y_o, double x, double x1, double x2, 
     void (*PresFunArray[])(double*,double, double, double,double,double) =\
     {LinearIncreaseFunction, ExponentialIncreaseFunction,RectFunction,SawFunction};
     
-    int FuncNo = 0;
+    int FuncNo = 3;
 
     if (FuncNo > 3) exit(1);
     
@@ -63,8 +68,8 @@ int main(int nargs,char *args[])
     double DeltaTime = 0.01;
     double DeltaSlip = 0.0002;
      
-
-    double ListOfParameters[5] = {0.011, 0.016, 0.2, DeltaSlip / (2.0*DeltaTime), D_c};
+    // ListOfParameters = [a, b, mu_o, V_o, D_c]
+    double ListOfParameters[5] = {0.011, 0.016, 0.2, 1.0 * pow(10.0,-1.0), D_c};
     
     double Theta, theta_oo, theta_o;
     
@@ -100,7 +105,7 @@ int main(int nargs,char *args[])
 
         for (i=1; i<1000; i++)
         {
-            PrescribedFunction(&SlipRate[i], ListOfParameters[3], i, 200, 300, 0.002);
+            PrescribedFunction(&SlipRate[i], ListOfParameters[3], i, 200, 600, 0.002);
             Slip[i] = Slip[i-1] + SlipRate[i-1]*DeltaTime;
             
 
@@ -136,7 +141,7 @@ int main(int nargs,char *args[])
         printf("--> RS-Healing Law Test\n");
         for (i=1; i<1000; i++)
         {
-            PrescribedFunction(&SlipRate[i], ListOfParameters[3], i, 200, 300, 0.002);
+            PrescribedFunction(&SlipRate[i], ListOfParameters[3], i, 200, 600, 0.002);
             Slip[i] = Slip[i-1] + SlipRate[i-1]*DeltaTime;
             
             
@@ -156,7 +161,7 @@ int main(int nargs,char *args[])
         printf("--> RS-Slip Law Test\n");
         for (i=1; i<1000; i++)
         {
-            PrescribedFunction(&SlipRate[i], ListOfParameters[3], i, 200, 300, 0.002);
+            PrescribedFunction(&SlipRate[i], ListOfParameters[3], i, 200, 600, 0.002);
             Slip[i] = Slip[i-1] + SlipRate[i-1]*DeltaTime;
             
 
@@ -175,7 +180,7 @@ int main(int nargs,char *args[])
         printf("--> RS-PRZ Law Test\n");
         for (i=1; i<1000; i++)
         {
-            PrescribedFunction(&SlipRate[i], ListOfParameters[3], i, 200, 300, 0.002);
+            PrescribedFunction(&SlipRate[i], ListOfParameters[3], i, 200, 600, 0.002);
             Slip[i] = Slip[i-1] + SlipRate[i-1]*DeltaTime;
 
 
