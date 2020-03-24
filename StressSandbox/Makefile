@@ -9,6 +9,7 @@ SRC =	../SDF-FaultRep/FuzzyFault.c \
 		../FrictionLaws/Lib_NewmarkTS.c \
 		../FrictionLaws/Lib_SetOfFrictionLaws.c \
 		Lib_MiniVoigt.c \
+		Lib_DisplacementFunctions.c \
 
 OBJ = $(SRC:.c=.o)
 
