@@ -5,15 +5,16 @@
 #include "Lib_SetOfFrictionLaws.h"
 
 
-void RectFunction(double Y[], double y_o, double x, double x1, double x2, double Amplitude)
+void LinearIncreaseFunction(double Y[], double y_o, double x, double x1, double x2, double Amplitude)
 {
-    if (x > x1 && x < x2)
-    {
-        Y[0] = y_o + Amplitude;
-    } else {
-        Y[0] = y_o;
-    }
+    Y[0] = x*Amplitude + y_o;
 }
+
+void ExponentialIncreaseFunction(double Y[], double y_o, double x, double x1, double x2, double Amplitude)
+{
+    Y[0] = pow(x,2.0)*Amplitude + y_o;
+}
+
 
 void RectFunction(double Y[], double y_o, double x, double x1, double x2, double Amplitude)
 {
@@ -24,12 +25,29 @@ void RectFunction(double Y[], double y_o, double x, double x1, double x2, double
         Y[0] = y_o;
     }
 }
+
+void SawFunction(double Y[], double y_o, double x, double x1, double x2, double Amplitude)
+{
+    if (x > x1 && x < x2)
+    {
+        Y[0] = y_o + Amplitude;
+    } else {
+        Y[0] = y_o;
+    }
+}
+
 
 
 void PrescribedFunction(double Y[], double y_o, double x, double x1, double x2, double Amplitude)
 {
-    Y[0] = x*Amplitude + y_o;
+    void (*PresFunArray[])(double*,double, double, double,double,double) =\
+    {LinearIncreaseFunction, ExponentialIncreaseFunction,RectFunction,SawFunction};
+    
+    int FuncNo = 0;
 
+    if (FuncNo > 3) exit(1);
+    
+    (*PresFunArray[FuncNo])(Y, y_o, x, x1, x2, Amplitude);
 }
 
 
