@@ -84,13 +84,13 @@ def se2wave_load_wavefield(filename,has_displacement,has_velocity):
 
 
 
-def SeparateList(List2Sep):
+def SeparateList(List2Sep,data):
     TotNum = len(List2Sep)
     xComponent = [List2Sep[i] for i in range(TotNum) if i%2==1]
     yComponent = [List2Sep[i] for i in range(TotNum) if i%2==0]
     
-    xComponent = np.reshape(xComponent,(385,385))
-    yComponent = np.reshape(yComponent,(385,385))
+    xComponent = np.reshape(xComponent,(data['nx'][0],data['ny'][0]))
+    yComponent = np.reshape(yComponent,(data['nx'][0],data['ny'][0]))
     return xComponent,yComponent
 
 
@@ -193,8 +193,11 @@ se2_coor = se2wave_load_coordinates(filename);
 w_filename = "/home/nico/Documents/TEAR/Codes_TEAR/plot-utils_se2wave/se2wave/step-1400_wavefield.pbin"
 se2_field = se2wave_load_wavefield(w_filename,True,True);
 
-LCoorX, LCoorY = SeparateList(se2_coor['coor'])
-LFieldX, LFieldY = SeparateList(se2_field['displ'])
+
+LCoorX, LCoorY = SeparateList(se2_coor['coor'], se2_coor)
+LFieldX, LFieldY = SeparateList(se2_field['displ'], se2_field)
+
+
 
 SplineFunction = [RectBivariateSpline(LCoorX[:,0], LCoorY[0,:], LFieldX), 
                   RectBivariateSpline(LCoorX[:,0], LCoorY[0,:], LFieldY)]
