@@ -36,7 +36,7 @@ class MGridData:
         x, y = np.linspace(self.coords[0][0], self.coords[1][0], self.NumPoints), \
                np.linspace(self.coords[0][1], self.coords[1][1], self.NumPoints)
 
-        zi = scipy.ndimage.map_coordinates(Z, np.vstack((x,y)))
+        zi = scipy.ndimage.map_coordinates(self.ZGrid, np.vstack((x,y)))
         Dist = math.sqrt((self.coords[1][0] - self.coords[0][0])**2.0 + (self.coords[1][1] - self.coords[0][1])**2.0)
         ZDist = np.linspace(0, Dist, self.NumPoints)
 
