@@ -85,8 +85,8 @@ def SeparateList(List2Sep,data):
     xComponent = List2Sep[1::2].tolist()
     yComponent = List2Sep[::2].tolist()
 
-    xComponent = np.reshape(xComponent,(data['nx'][0],data['ny'][0]))
-    yComponent = np.reshape(yComponent,(data['nx'][0],data['ny'][0]))
+    xComponent = np.reshape(xComponent,(data['nx'].item() ,data['ny'].item() ))
+    yComponent = np.reshape(yComponent,(data['nx'].item() ,data['ny'].item() ))
     return xComponent,yComponent
 
 def GetProfileData(LocIni,LocEnd,NumPoints, SplineFunction):
