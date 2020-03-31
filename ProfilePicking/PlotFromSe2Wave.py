@@ -22,9 +22,15 @@ SplineFunction = [RectBivariateSpline(LCoorX[:,0], LCoorY[0,:], LFieldX),
 
 ArrayDist, CompX, CompY = GetProfileData(LocIni,LocEnd,NumPoints, SplineFunction)
 
-img, axList = FigSetupAndPlotImage(LCoorX, LCoorY, LFieldX, SplineFunction)
 
-PlotLocLine(img,LocIni,LocEnd)
 
-PlotProfiles(ArrayDist, CompX, CompY, axList)
-plt.show()
+BuildAndSaveDomainFig(LCoorX,LCoorY,LFieldX, LocIni, LocEnd,
+                      "Displacement field X-component [m]", "DispField_XComp.pdf")
+BuildAndSaveDomainFig(LCoorX,LCoorY,LFieldY, LocIni, LocEnd,
+                      "Displacement field Y-component [m]", "DispField_YComp.pdf")
+
+PlotProfileInter(ArrayDist, CompX, "Displacement field X-component [m]", 
+                "Profile_XComp.pdf")
+
+PlotProfileInter(ArrayDist, CompY, "Displacement field Y-component [m]", 
+                "Profile_YComp.pdf")
