@@ -101,7 +101,9 @@ def GetProfileData(LocIni,LocEnd,NumPoints, SplineFunction):
 
     return ArrayDist, CompX, CompY
 
-def FigSetupAndPlotImage(LCoorX,LCoorY,Field, SplineFunction):
+
+#------------- for Plotting all together DEPRECATED -------------#
+def FigSetupAndPlotImage(LCoorX,LCoorY,Field):
     fig = plt.figure(figsize = (10,5) ,constrained_layout=True)
     gs = fig.add_gridspec(2, 4)
     ax1 = fig.add_subplot(gs[0:2, 0:2])
@@ -115,6 +117,8 @@ def FigSetupAndPlotImage(LCoorX,LCoorY,Field, SplineFunction):
 def PlotProfiles(ArrayDist, CompX, CompY, axList):
     axList[0].plot(ArrayDist,CompX)
     axList[1].plot(ArrayDist,CompY)
+#-----------------------------------------------------#
+
 
 def PlotLocLine(img,LocIni,LocEnd):
     img.axes.annotate("",
@@ -126,11 +130,48 @@ def PlotLocLine(img,LocIni,LocEnd):
                         arrowstyle = "<-",
                         connectionstyle = "arc3", 
                         color = 'white',
-                        alpha = 0.7,
-                        linewidth = 3
+                        alpha = 1,
+                        linewidth = 1
                         ),
                     )
 
+def PlotDomain(CoorX, CoorY, Field, FieldName):
+    fig = plt.figure(figsize = (6, 5), constrained_layout = True)
+    gs = fig.add_gridspec(1, 1)
+    ax = fig.add_subplot(gs[:, :])
+    ax.set_title("Domain:\n{FName}".format(FName = FieldName[:-4]))
+    ax.set_xlabel("X-Coordinate [m]"), ax.set_ylabel("Y-Coordinate [m]")
+    ax.set_aspect('equal', 'box')
+
+    img = ax.pcolormesh(CoorX, CoorY, Field)
+    cbar = fig.colorbar(img, ax = ax)
+    cbar.ax.set_ylabel(FieldName)
+    
+    return fig, img
+
+
+def BuildAndSaveDomainFig(CoorX, CoorY, Field, LocIni, LocEnd, FieldName,FileName):
+    fig, img = PlotDomain(CoorX, CoorY, Field, FieldName)
+    PlotLocLine(img, LocIni, LocEnd)
+
+    print("Saving figure: {}".format(FileName))
+    fig.savefig(FileName, dpi = 300)
+    print("\rSaved figure! {}".format(FileName))
+
+def PlotProfileInter(Dist, ProfileData, PlotTitle, Filename):
+    fig = plt.figure(figsize = (10,5) ,constrained_layout=True)
+    gs = fig.add_gridspec(1, 1)
+    ax = fig.add_subplot(gs[:, :])
+    
+    ax.set(xlabel='Distance [m]', ylabel='Displacement [m]',
+       title='Profile Plot:\n{}'.format(PlotTitle))
+    ax.grid()
+    
+    plt.plot(Dist, ProfileData, 'b')
+    
+    print("Saving figure: {}".format(Filename))
+    fig.savefig(Filename, dpi=300)
+    print("\rSaved figure: {}".format(Filename))
 
 #------------ GUI Functions -----------
 
