@@ -2,13 +2,13 @@ import numpy as np
 from matplotlib import pyplot as plt
 import math
 
-def SeparateList(List2Sep,data):
+def SeparateList(List2Sep,nx,ny):
     TotNum = len(List2Sep)
-    xComponent = List2Sep[1::2].tolist()
-    yComponent = List2Sep[::2].tolist()
+    xComponent = List2Sep[0:TotNum:2]
+    yComponent = List2Sep[1:TotNum:2]
 
-    xComponent = np.reshape(xComponent,(data['nx'].item() ,data['ny'].item() ))
-    yComponent = np.reshape(yComponent,(data['nx'].item() ,data['ny'].item() ))
+    xComponent = np.reshape(xComponent, (nx, ny), "F")
+    yComponent = np.reshape(yComponent, (nx, ny), "F")
     return xComponent,yComponent
 
 def GetProfileData(LocIni,LocEnd,NumPoints, SplineFunction):
