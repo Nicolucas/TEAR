@@ -1,8 +1,7 @@
 from matplotlib import pyplot as plt
-
-from Lib_ProfileFromImage import *
-
 from scipy.interpolate import RectBivariateSpline
+from Lib_ProfileFromImage import *
+from se2waveload import *
 
 
 filename = "/home/nico/Documents/TEAR/Codes_TEAR/plot-utils_se2wave/se2wave/default_mesh_coor.pbin"
