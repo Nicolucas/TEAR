@@ -58,9 +58,13 @@ def PlotLocLine(img,LocIni,LocEnd):
                     )
 
 def PlotDomain(CoorX, CoorY, Field, FieldName):
-    fig = plt.figure(figsize = (6, 5), constrained_layout = True)
-    gs = fig.add_gridspec(1, 1)
-    ax = fig.add_subplot(gs[:, :])
+    try:
+      fig = plt.figure(figsize = (6, 5), constrained_layout=True)
+      gs = fig.add_gridspec(1, 1)
+      ax = fig.add_subplot(gs[:, :])
+    except:
+      fig = plt.figure(figsize = (6, 5))
+      ax = fig.add_subplot(1,1,1)
     ax.set_title("Domain:\n{FName}".format(FName = FieldName[:-4]))
     ax.set_xlabel("X-Coordinate [m]"), ax.set_ylabel("Y-Coordinate [m]")
     ax.set_aspect('equal', 'box')
@@ -81,10 +85,14 @@ def BuildAndSaveDomainFig(CoorX, CoorY, Field, LocIni, LocEnd, FieldName,FileNam
     print("\rSaved figure! {}".format(FileName))
 
 def PlotProfileInter(Dist, ProfileData, PlotTitle, Filename):
-    fig = plt.figure(figsize = (10,5) ,constrained_layout=True)
-    gs = fig.add_gridspec(1, 1)
-    ax = fig.add_subplot(gs[:, :])
-    
+    try:
+      fig = plt.figure(figsize = (10,5), constrained_layout=True)
+      gs = fig.add_gridspec(1, 1)
+      ax = fig.add_subplot(gs[:, :])
+    except:
+      fig = plt.figure(figsize = (10,5))
+      ax = fig.add_subplot(1,1,1)
+
     ax.set(xlabel='Distance [m]', ylabel='Displacement [m]',
        title='Profile Plot:\n{}'.format(PlotTitle))
     ax.grid()
