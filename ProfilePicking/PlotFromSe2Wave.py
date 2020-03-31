@@ -1,8 +1,7 @@
 from matplotlib import pyplot as plt
-
-from Lib_ProfileFromImage import *
-
 from scipy.interpolate import RectBivariateSpline
+from Lib_ProfileFromImage import *
+from se2waveload import *
 
 
 LocIni,LocEnd = [-500, -500], [500, 500]
