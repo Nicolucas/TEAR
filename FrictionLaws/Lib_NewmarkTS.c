@@ -34,7 +34,23 @@ void CalcSigmaComponent(double Sigma[],double n_i[], double n_j[], double *Sigma
  * - Checks for positive SlipRate, Slip, and Theta, otherwise it throws an error
  * - Checks for negative Sigma_N, if positive it leaves Tau_c = 0
 */
-void CompTauCritic(double Sigma[], double Sdot, double Theta, double ListOfParameters[], double n[], double *TauC, double *Friction)
+void GetFricValue(double Slip, double SlipDot, double Theta,\
+                  double ListOfParameters[], int FricFuncNo, double *Friction)
+{
+    if (FricFuncNo = 0) // 0 -> LSW 
+    {
+        FricSW(Friction, ListOfParameters[5], ListOfParameters[6], ListOfParameters[7],  Slip);
+    } else if (FricFuncNo = 1) { // 1 -> VW 
+        printf("VW Not Implemented\n");
+    } else { // 2 -> RSF 
+        FricRS(Friction, SlipDot, Theta, ListOfParameters);
+    }
+}
+
+
+
+
+void CompTauCriticRS(double Sigma[], double Sdot, double Theta, double ListOfParameters[], double n[], double *TauC, double *Friction)
 {
     double SigmaN;
 
@@ -48,7 +64,6 @@ void CompTauCritic(double Sigma[], double Sdot, double Theta, double ListOfParam
         TauC[0] = - SigmaN * Friction[0];
     }
 }
-
 
 /**GetFaultTraction
  * Calculate the Fault traction component T and compare with the critical shear traction Tau_c. 
