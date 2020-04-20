@@ -119,13 +119,13 @@ void StressCorrector(double deltaTime, double loc[], double delta, double ListOf
    
     if (FricFuncNo = 0) // 0 -> LSW 
     {
-        GetFricValue(Slip, SlipDot, Theta,\
-                 ListOfParameters, FricFuncNo, &Friction)   
+        GetFricValue(Slip[0], SlipDot[0], Theta[0],\
+                 ListOfParameters, FricFuncNo, &Friction);   
     } else if (FricFuncNo = 1) { // 1 -> VW 
         printf("VW Not Implemented\n");
         exit(1);
     } else { // 2 -> RSF 
-        GetFricValue(Slip, SlipDot, Theta,\
+        GetFricValue(Slip[0], SlipDot[0], Theta[0],\
                  ListOfParameters, FricFuncNo, &Friction);
     }
 
@@ -145,7 +145,7 @@ void StressCorrector(double deltaTime, double loc[], double delta, double ListOf
     if(UpdateStress)
     {
         sigma[2] = Traction[0]*(Normal[0]*Tangent[1]+Normal[1]*Tangent[0]);
-        NewSlip = Slip[0] + (LameDelta/LameG)*(Traction-TauC);
+        NewSlip = Slip[0] + (LameDelta/LameG)*(Traction[0]-TauC);
     } 
         
 
