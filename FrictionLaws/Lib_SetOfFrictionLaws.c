@@ -49,22 +49,22 @@ void EvalStaticDynamic(double Tau[], double sigma[], double mu)
  * Otherwise:  Tau = \sigma_n * \mu_d 
 */
 
-void FricSW(double *Fric, double mu_s, double mu_d, double D_c, double *Slip)
+void FricSW(double *Fric, double mu_s, double mu_d, double D_c, double Slip)
 {
-    PositiveValueControl(Slip[0],"Slip");
-    if (Slip[0] < D_c)
+    PositiveValueControl(Slip,"Slip");
+    if (Slip < D_c)
     {
-        Fric[0] = (mu_s - (mu_s - mu_d) * Slip[0] / D_c);
+        Fric[0] = (mu_s - (mu_s - mu_d) * Slip / D_c);
     } else {
         Fric[0] = mu_d;
     }
 
 }
-void EvalSlipWeakening(double Tau[], double sigma_n[], double mu_s, double mu_d, double D_c,double Slip[])
+void EvalSlipWeakening(double Tau[], double sigma_n[], double mu_s, double mu_d, double D_c,double Slip)
 {
     double Fric;
     
-    PositiveValueControl(Slip[0],"Slip");
+    PositiveValueControl(Slip,"Slip");
     FricSW(&Fric, mu_s, mu_d, D_c, Slip);
     Tau[0] = - sigma_n[0] * Fric;
 }
