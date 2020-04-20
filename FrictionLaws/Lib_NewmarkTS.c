@@ -48,16 +48,15 @@ void GetFricValue(double Slip, double SlipDot, double Theta,\
 }
 
 
-void CompTauCriticRS(double Sigma[], double n[], double *TauC, double *Friction)
+void CompTauCritic(double Sigma[], double n[], double *TauC, double Friction)
 {
     double SigmaN;
     CalcSigmaComponent(Sigma, n, n, &SigmaN);
 
     TauC[0] = 0.0;
-
     if(SigmaN < 0.0)
     {
-        TauC[0] = - SigmaN * Friction[0];
+        TauC[0] = - SigmaN * Friction;
     }
 }
 
