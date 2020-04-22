@@ -50,15 +50,15 @@ void Displacement(int FuncNo, double x, double y, double t, double DispVect[], d
 
 void FLinit_LSW(double FricParam[])
 {
-    FricParam[5] = 0.05 ; // mu_s
-    FricParam[6] = 0.02 ; // mu_d
+    FricParam[5] = 0.6 ; // mu_s
+    FricParam[6] = 0.2 ; // mu_d
     FricParam[7] = 2.1 ; // D_c
 }
 
 void FLinit_VW(double FricParam[])
 {
-    FricParam[5] = 0.05 ; // mu_s
-    FricParam[6] = 0.02 ; // mu_d
+    FricParam[5] = 0.6 ; // mu_s
+    FricParam[6] = 0.2 ; // mu_d
     FricParam[3] = 1.0 * pow(10.0,-5.0) ; // V_o
 }
 
@@ -86,7 +86,6 @@ void FrictionParametersInitialization(int FuncNo, double FricParam[])
 /**
  *  Newmark Time Stepping: Implementation function
 */
-
 
 
 
@@ -123,7 +122,7 @@ void StressCorrector(double deltaTime, double loc[], double delta, double ListOf
     }
 
     CalcSigmaComponent(sigma, Normal, Normal, &SigmaN);
-    printf("SigmaN = %f -",SigmaN);
+    
     /**
      * Step 3.
      * Calculate the critical shear traction Tau_Critical
@@ -136,6 +135,7 @@ void StressCorrector(double deltaTime, double loc[], double delta, double ListOf
      * if Tau > Tau_Critical, update the off-diagonal component of the stress 
      */
     GetFaultTraction(sigma, Tangent, Normal, TauC, Traction, &UpdateStress);
+    
     printf("Friction: %f - Tau_C: %f - Traction: %f \n", Friction[0], TauC, Traction[0]);
 
     if(UpdateStress)
@@ -143,8 +143,9 @@ void StressCorrector(double deltaTime, double loc[], double delta, double ListOf
         
         sigma[2] = Traction[0]*(Normal[0]*Tangent[1]+Normal[1]*Tangent[0]);
         NewSlip = Slip[0] + (LameDelta/LameG)*(Traction[0]-TauC);
+        Traction[0] = TauC;
     } 
-        
+    
 
     /**
      * Step 5. 
@@ -162,12 +163,12 @@ void demo1(int FuncNo, int DispFuncNo, char *fn)
 
     
     double loc[2], Normal[2], Tangent[2];
-    double displacement[2], velocity[2], Grad[4], e_vect[3], sigma[3];;
+    double displacement[2], velocity[2], Grad[4], e_vect[3], sigma[3];
     double delta = 1.0;
 
-    double lambda = 30.0, G = 0.6;
+    double lambda = 30.0, G = 10.;
 
-    double time = 0.0, deltaTime = 0.001;;
+    double time = 0.0, deltaTime = 0.0001;
     
     double ListOfParameters[8];
     double Slip, SlipDot, Friction, Traction, Theta;
@@ -181,31 +182,38 @@ void demo1(int FuncNo, int DispFuncNo, char *fn)
     fp = fopen(fn,"w+");
     
     FrictionParametersInitialization(FuncNo, ListOfParameters);
-    for (i=1; i<1000; i++)
+
+    Displacement(DispFuncNo, loc[0],  loc[1],  time,  displacement,  Grad,  velocity);
+    NablaPhi(loc,Normal);
+    NormalVecGetTangentVec(Normal,Tangent);
+    DotProductTangent2D(displacement, Tangent, &Slip);
+    DotProductTangent2D(velocity, Tangent, &SlipDot);
+
+
+    for (i=1; i<100000; i++)
     {
         time += deltaTime;
 
         /** 
-            * Preamble: Geometry
-            * get the Normal and the Tangent directions based on the Fault geometry in case it has changed
+         * Preamble: Geometry
+         * get the Normal and the Tangent directions based on the Fault geometry in case it has changed
         */
         NablaPhi(loc,Normal);
         NormalVecGetTangentVec(Normal,Tangent);
 
         /**
-         * Step 1. 
-         * Extracting the Slip given the fault representation
+         * Stress components calculation
+         * Use the prescribed displacement field to calculate loading of the stress tensor
         */
         Displacement(DispFuncNo, loc[0],  loc[1],  time + deltaTime,  displacement,  Grad,  velocity);
-        DotProductTangent2D(displacement, Tangent, &Slip);
 
-        // Calculate sigma
         e_vect[0] = Grad[0];
         e_vect[1] = Grad[1];
         e_vect[2] = (Grad[2] + Grad[3]);
         CalcStress(lambda, G, e_vect, sigma);
         
-
+        // Slip predictor
+        Slip = Slip + deltaTime*SlipDot;
 
         StressCorrector(deltaTime, loc, delta, ListOfParameters, FuncNo,\
                         lambda, G, &Traction, Normal, Tangent,\
