@@ -37,10 +37,10 @@ void CalcSigmaComponent(double Sigma[],double n_i[], double n_j[], double *Sigma
 void GetFricValue(double Slip, double SlipDot, double Theta,\
                   double ListOfParameters[], int FricFuncNo, double *Friction)
 {
-    if (FricFuncNo = 0) // 0 -> LSW 
+    if (FricFuncNo == 0) // 0 -> LSW 
     {
         FricSW(Friction, ListOfParameters[5], ListOfParameters[6], ListOfParameters[7],  Slip);
-    } else if (FricFuncNo = 1) { // 1 -> VW 
+    } else if (FricFuncNo == 1) { // 1 -> VW 
         printf("VW Not Implemented\n");
     } else { // 2 -> RSF 
         FricRS(Friction, SlipDot, Theta, ListOfParameters);
