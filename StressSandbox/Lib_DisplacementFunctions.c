@@ -4,7 +4,7 @@
 
 void ExpDisplacementFunc(double x, double y, double t, double DispVect[], double Grad[], double VelocityVect[])
 {
-  double Amp = 2., DiagAmp=0.2;
+  double Amp = 2./100000.0, DiagAmp=0.1/100000.0;
 
   DispVect[0] = - Amp*exp(x + y) - DiagAmp*exp(y)*pow(t,2.0);
   DispVect[1] = - Amp*exp(y + x);
@@ -20,7 +20,7 @@ void ExpDisplacementFunc(double x, double y, double t, double DispVect[], double
 
 void LinearDisplacementFunc(double x, double y, double t, double DispVect[], double Grad[], double VelocityVect[])
 {
-  double Amp = 2., DiagAmp=0.2;
+  double Amp = 2./100000.0, DiagAmp=1./100000.0;
 
   DispVect[0] = - Amp*exp(x + y) - DiagAmp*exp(y)*t;
   DispVect[1] = - Amp*exp(y + x);
@@ -37,10 +37,10 @@ void LinearDisplacementFunc(double x, double y, double t, double DispVect[], dou
 
 void RectDisplacementFunc(double x, double y, double t, double DispVect[], double Grad[], double VelocityVect[])
 {
-  double Amp = 2., DiagAmp=0.2;
+  double Amp = 2./100000.0, DiagAmp=10.0/100000.0;
 
 
-  if (t > 0.4 && t < 0.6){
+  if (t > 0.4 && t < 6.){
   DispVect[0] = -Amp*exp(x + y) - DiagAmp*exp(y)*t;
   DispVect[1] = -Amp*exp(y + x);
 
@@ -52,7 +52,7 @@ void RectDisplacementFunc(double x, double y, double t, double DispVect[], doubl
   Grad[2] = -Amp*exp(x + y) - DiagAmp*exp(y)*t; //DU_1/Dy
   Grad[3] = -Amp*exp(x + y); //DU_2/Dx
   } else {
-  Amp = 0.1, DiagAmp=0.002;
+  Amp = 0.1/100000.0, DiagAmp=0.02/100000.0;
 
   DispVect[0] = -Amp*exp(x + y) - DiagAmp*exp(y)*t;
   DispVect[1] = -Amp*exp(y + x);
