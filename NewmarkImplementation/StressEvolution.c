@@ -6,6 +6,8 @@
 #include "../SDF-FaultRep/FuzzyFault.h"
 #include "../FrictionLaws/Lib_NewmarkTS.h"
 #include "../FrictionLaws/Lib_SetOfFrictionLaws.h"
+#include "../StressSandbox/Lib_MiniVoigt.h"
+#include "../StressSandbox/Lib_DisplacementFunctions.h"
 
 /**
  * Initialization has to be done in a structure object with 
@@ -25,13 +27,19 @@ void DotProductTangent2D(double Vect[], double Tangent[], double *VectComp)
   VectComp[0] = Vect[0]*Tangent[0] + Vect[1]*Tangent[1];
 }
 
-void GetSlipSlipRate(double delta, double loc[], double Normal[], double Tangent[],\
-                     double *Slip, double *SlipDot)
-{ 
-  EvaluateSlipRateAtPoint(loc, delta, SlipDot);
-}
-
 // [End] Fault Geometry Definition
+
+/**
+ * Analytical displacement function for testing 
+*/
+void Displacement(int FuncNo, double x, double y, double t, double DispVect[], double Grad[], double VelocityVect[])
+{
+  void (*PresFunArray[])(double, double, double, double[], double[], double[]) =\
+    {RectDisplacementFunc, LinearDisplacementFunc, ExpDisplacementFunc};
+
+    if (FuncNo > 2) exit(1);
+    (*PresFunArray[FuncNo])(x, y, t, DispVect, Grad, VelocityVect);
+}
 
 /**
  * Friction Law: Value Initialization and Selection
@@ -44,7 +52,7 @@ void FLinit_LSW(double FricParam[])
 {
     FricParam[5] = 0.05 ; // mu_s
     FricParam[6] = 0.02 ; // mu_d
-    FricParam[7] = 0.03 ; // D_c
+    FricParam[7] = 2.1 ; // D_c
 }
 
 void FLinit_VW(double FricParam[])
@@ -83,33 +91,18 @@ void FrictionParametersInitialization(int FuncNo, double FricParam[])
 
 
 void StressCorrector(double deltaTime, double loc[], double delta, double ListOfParameters[], int FricFuncNo,\
-                     double LameDelta, double LameG, double *Traction,\
-                     double *VarFric, double *Theta, double *Slip, double *SlipDot, double sigma[])
+                     double LameDelta, double LameG, double *Traction, double Normal[], double Tangent[],\
+                     double *Friction, double *Theta, double *Slip, double *SlipDot, double sigma[])
 {
-    double Normal[2];
-    double Tangent[2];
 
     //FricFuncNo: Options (0-2)-> LSW, VW, RSF
-    double Friction, TauC;
+    double TauC;
 
     bool UpdateStress;
     double NewSlip = Slip[0];
 
-    /** 
-     * Preamble:
-     * get the Normal and the Tangent directions based on the Fault geometry in case it has changed
-     * 
-    */
-    NablaPhi(loc,Normal);
-    NormalVecGetTangentVec(Normal,Tangent);
-
-    /**
-     * Step 1. 
-     * Extracting the Slip given the fault representation
-    */
+    double SigmaN;
     
-    GetSlipSlipRate(delta, loc, Normal, Tangent, &Slip, &SlipDot);
-
 
     /**
      * Step 2. 
@@ -117,23 +110,25 @@ void StressCorrector(double deltaTime, double loc[], double delta, double ListOf
      * 
     */
    
-    if (FricFuncNo = 0) // 0 -> LSW 
+    if (FricFuncNo == 0) // 0 -> LSW 
     {
         GetFricValue(Slip[0], SlipDot[0], Theta[0],\
-                 ListOfParameters, FricFuncNo, &Friction);   
-    } else if (FricFuncNo = 1) { // 1 -> VW 
+                 ListOfParameters, FricFuncNo, Friction);   
+    } else if (FricFuncNo == 1) { // 1 -> VW 
         printf("VW Not Implemented\n");
         exit(1);
     } else { // 2 -> RSF 
         GetFricValue(Slip[0], SlipDot[0], Theta[0],\
-                 ListOfParameters, FricFuncNo, &Friction);
+                 ListOfParameters, FricFuncNo, Friction);
     }
 
+    CalcSigmaComponent(sigma, Normal, Normal, &SigmaN);
+    printf("SigmaN = %f -",SigmaN);
     /**
      * Step 3.
      * Calculate the critical shear traction Tau_Critical
      */
-    CompTauCritic(sigma, Normal, &TauC,  Friction);
+    CompTauCritic(sigma, Normal, &TauC,  Friction[0]);
 
     /**
      * Step 4.
@@ -141,9 +136,11 @@ void StressCorrector(double deltaTime, double loc[], double delta, double ListOf
      * if Tau > Tau_Critical, update the off-diagonal component of the stress 
      */
     GetFaultTraction(sigma, Tangent, Normal, TauC, Traction, &UpdateStress);
-    
+    printf("Friction: %f - Tau_C: %f - Traction: %f \n", Friction[0], TauC, Traction[0]);
+
     if(UpdateStress)
     {
+        
         sigma[2] = Traction[0]*(Normal[0]*Tangent[1]+Normal[1]*Tangent[0]);
         NewSlip = Slip[0] + (LameDelta/LameG)*(Traction[0]-TauC);
     } 
@@ -155,4 +152,79 @@ void StressCorrector(double deltaTime, double loc[], double delta, double ListOf
     */
     SlipDot[0] = (NewSlip-Slip[0])/deltaTime;
     Slip[0] = NewSlip;
+}
+
+
+
+void demo1(int FuncNo, int DispFuncNo, char *fn)
+{
+    FILE *fp;
+
+    
+    double loc[2], Normal[2], Tangent[2];
+    double displacement[2], velocity[2], Grad[4], e_vect[3], sigma[3];;
+    double delta = 1.0;
+
+    double lambda = 30.0, G = 0.6;
+
+    double time = 0.0, deltaTime = 0.001;;
+    
+    double ListOfParameters[8];
+    double Slip, SlipDot, Friction, Traction, Theta;
+
+    int i;
+
+    loc[0] = 0.001;
+    loc[1] = 0.001;
+    Theta = 1.0;
+
+    fp = fopen(fn,"w+");
+    
+    FrictionParametersInitialization(FuncNo, ListOfParameters);
+    for (i=1; i<1000; i++)
+    {
+        time += deltaTime;
+
+        /** 
+            * Preamble: Geometry
+            * get the Normal and the Tangent directions based on the Fault geometry in case it has changed
+        */
+        NablaPhi(loc,Normal);
+        NormalVecGetTangentVec(Normal,Tangent);
+
+        /**
+         * Step 1. 
+         * Extracting the Slip given the fault representation
+        */
+        Displacement(DispFuncNo, loc[0],  loc[1],  time + deltaTime,  displacement,  Grad,  velocity);
+        DotProductTangent2D(displacement, Tangent, &Slip);
+
+        // Calculate sigma
+        e_vect[0] = Grad[0];
+        e_vect[1] = Grad[1];
+        e_vect[2] = (Grad[2] + Grad[3]);
+        CalcStress(lambda, G, e_vect, sigma);
+        
+
+
+        StressCorrector(deltaTime, loc, delta, ListOfParameters, FuncNo,\
+                        lambda, G, &Traction, Normal, Tangent,\
+                        &Friction, &Theta, &Slip, &SlipDot, sigma);
+        
+        fprintf(fp, "%f ; %f ; %f ; %f ; %f ; %f \n", time, Slip, SlipDot, Theta, Friction, Traction);
+    }
+    fclose(fp);
+}
+
+
+int main(int nargs,char *args[])
+{
+    printf("Running demo: Func 1 \n");
+    demo1(0, 0, "./Output/Demo_01.txt");
+    printf("Running demo: Func 2 \n");
+    demo1(0, 1, "./Output/Demo_02.txt");
+    printf("Running demo: Func 3 \n");
+    demo1(0, 2, "./Output/Demo_03.txt");
+
+    return(0);
 }
