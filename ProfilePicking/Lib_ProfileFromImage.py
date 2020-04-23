@@ -1,6 +1,9 @@
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib import cm
 import math
+
+cmap = cm.get_cmap("plasma")
 
 def SeparateList(List2Sep,nx,ny):
     TotNum = len(List2Sep)
@@ -22,6 +25,14 @@ def GetProfileData(LocIni,LocEnd,NumPoints, SplineFunction):
     ArrayDist = np.linspace(0, Dist, NumPoints)
 
     return ArrayDist, CompX, CompY
+
+def GetLocData(Loc, SplineFunction):
+    x0,y0 = Loc[0],Loc[1]
+
+    CompX = SplineFunction[0](Loc[0],Loc[1])[0][0]
+    CompY = SplineFunction[1](Loc[0],Loc[1])[0][0]
+
+    return CompX, CompY
 
 
 #------------- for Plotting all together DEPRECATED -------------#
@@ -98,7 +109,35 @@ def PlotProfileInter(Dist, ProfileData, PlotTitle, Filename):
     ax.grid()
     
     plt.plot(Dist, ProfileData, 'b')
+
+
+    print("Saving figure: {}".format(Filename))
+    fig.savefig(Filename, dpi=300)
+    print("\rSaved figure: {}".format(Filename))
+
+
+
+
+
+def PlotTimeProfile(TimeList, ProfileData, PlotTitle, Filename, Combined = False, Loc = None):
+    try:
+      fig = plt.figure(figsize = (10,5), constrained_layout=True)
+      gs = fig.add_gridspec(1, 1)
+      ax = fig.add_subplot(gs[:, :])
+    except:
+      fig = plt.figure(figsize = (10,5))
+      ax = fig.add_subplot(1,1,1)
+
+    ax.set(xlabel='Time [s]', ylabel='Displacement [m]',
+       title='Profile Plot:\n{}'.format(PlotTitle))
+    ax.grid()
     
+    if(not Combined):
+        plt.plot(TimeList, ProfileData, 'b')
+    else:
+        lines = [plt.plot(TimeList, data, c = cmap(idx/len(Loc)),
+                label = "({x},{y})".format(x=Loc[idx][0],y=Loc[idx][1])) for idx,data in enumerate(ProfileData)]
+        ax.legend()
     print("Saving figure: {}".format(Filename))
     fig.savefig(Filename, dpi=300)
     print("\rSaved figure: {}".format(Filename))
