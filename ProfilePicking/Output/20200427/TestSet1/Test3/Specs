@@ -1,0 +1,9 @@
+Settings as original program se2dr
+stations at 0,2000,4000,6000,8000 m
+mesh 400x400
+deltafactor 2.0001
+bdegree 1
+
+[se2dr] cell sizes: dx = 1.0000e+02, dy = 1.0000e+02
+[se2dr] using fault delta = 2.0001e+02
+[se2dr] elements across fault = 4.0002e+00

@@ -1,0 +1,2 @@
+deltafactor = 2.0002
+mesh = 800x800

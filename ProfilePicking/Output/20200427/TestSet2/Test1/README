@@ -1,0 +1,7 @@
+This set includes simulations where a change in the code has been done,
+The change in this case is that the predicted slip is equal to the old slip
+
+Line - 2261
+slip = dr_celldata[q].slip + 0.5 * dt * slip_rate;
+Changed to
+slip = dr_celldata[q].slip;

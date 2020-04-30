@@ -1,0 +1,10 @@
+This set includes simulations where a change in the code has been done,
+The change in this case is that the predicted slip is a FULL STEP PREDICTION:
+
+Line: 2261
+slip = dr_celldata[q].slip + dt * slip_rate;
+
+and then the final slip and slip rate update is given by:
+line: 2345
+dr_celldata[q].slip += e_inelastic_xy;
+dr_celldata[q].slip_rate = e_inelastic_xy/dt;
