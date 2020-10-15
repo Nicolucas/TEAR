@@ -1,6 +1,11 @@
+import sys
 from matplotlib import pyplot as plt
 from scipy.interpolate import RectBivariateSpline
-from Lib_ProfileFromImage import *
+
+sys.path.insert(0,"/home/nico/Documents/TEAR/Codes_TEAR/PythonCodes/LibFolder")
+from Lib_ProfilePlotting import *
+from Lib_ProfileProcessing import *
+
 from se2waveload import *
 
 

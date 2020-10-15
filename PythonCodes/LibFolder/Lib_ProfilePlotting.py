@@ -1,56 +1,7 @@
-import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import cm
-import math
-
+from mpl_toolkits import axes_grid1
 cmap = cm.get_cmap("plasma")
-
-def SeparateList(List2Sep,nx,ny):
-    TotNum = len(List2Sep)
-    xComponent = List2Sep[0:TotNum:2]
-    yComponent = List2Sep[1:TotNum:2]
-
-    xComponent = np.reshape(xComponent, (nx, ny), "F")
-    yComponent = np.reshape(yComponent, (nx, ny), "F")
-    return xComponent,yComponent
-
-def GetProfileData(LocIni,LocEnd,NumPoints, SplineFunction):
-    x0,y0,x1,y1 = LocIni[0], LocIni[1], LocEnd[0], LocEnd[1]
-    x, y = np.linspace(x0, x1, NumPoints),   np.linspace(y0, y1, NumPoints)
-
-    CompX = [SplineFunction[0](x[i], y[i])[0][0] for i in range(NumPoints)]
-    CompY = [SplineFunction[1](x[i], y[i])[0][0] for i in range(NumPoints)]
-
-    Dist = math.sqrt((x1 - x0)**2.0 + (y1 - y0)**2.0)
-    ArrayDist = np.linspace(0, Dist, NumPoints)
-
-    return ArrayDist, CompX, CompY
-
-def GetLocData(Loc, SplineFunction):
-    x0,y0 = Loc[0],Loc[1]
-
-    CompX = SplineFunction[0](Loc[0],Loc[1])[0][0]
-    CompY = SplineFunction[1](Loc[0],Loc[1])[0][0]
-
-    return CompX, CompY
-
-
-#------------- for Plotting all together DEPRECATED -------------#
-def FigSetupAndPlotImage(LCoorX,LCoorY,Field):
-    fig = plt.figure(figsize = (10,5) ,constrained_layout=True)
-    gs = fig.add_gridspec(2, 4)
-    ax1 = fig.add_subplot(gs[0:2, 0:2])
-    ax1.set_aspect('equal', 'box')
-    axList= [fig.add_subplot(gs[i,2:4]) for i in range(2)]
-
-    img = ax1.pcolormesh(LCoorX,LCoorY,Field)
-
-    return img, axList
-
-def PlotProfiles(ArrayDist, CompX, CompY, axList):
-    axList[0].plot(ArrayDist,CompX)
-    axList[1].plot(ArrayDist,CompY)
-#-----------------------------------------------------#
 
 
 def PlotLocLine(img,LocIni,LocEnd):
@@ -60,7 +11,7 @@ def PlotLocLine(img,LocIni,LocEnd):
                     xytext = (LocEnd[0], LocEnd[1]), 
                     textcoords = 'data',
                     arrowprops = dict(
-                        arrowstyle = "<-",
+                        arrowstyle = "-",
                         connectionstyle = "arc3", 
                         color = 'white',
                         alpha = 1,
@@ -68,7 +19,8 @@ def PlotLocLine(img,LocIni,LocEnd):
                         ),
                     )
 
-def PlotDomain(CoorX, CoorY, Field, FieldName):
+
+def PlotDomain(CoorX, CoorY, Field, FieldName,TimeTxt):
     try:
       fig = plt.figure(figsize = (6, 5), constrained_layout=True)
       gs = fig.add_gridspec(1, 1)
@@ -76,26 +28,26 @@ def PlotDomain(CoorX, CoorY, Field, FieldName):
     except:
       fig = plt.figure(figsize = (6, 5))
       ax = fig.add_subplot(1,1,1)
-    ax.set_title("Domain:\n{FName}".format(FName = FieldName[:-4]))
+    ax.set_title("{FName}".format(FName = FieldName[:-4]))
     ax.set_xlabel("X-Coordinate [m]"), ax.set_ylabel("Y-Coordinate [m]")
     ax.set_aspect('equal', 'box')
-
     img = ax.pcolormesh(CoorX, CoorY, Field)
-    cbar = fig.colorbar(img, ax = ax)
+
+    ax.annotate(text=TimeTxt,xy=[0.8,0.1], xycoords= "axes fraction")
+    cbar = fig.colorbar(img, shrink=.5)
     cbar.ax.set_ylabel(FieldName)
     
     return fig, img
 
 
-def BuildAndSaveDomainFig(CoorX, CoorY, Field, LocIni, LocEnd, FieldName,FileName):
-    fig, img = PlotDomain(CoorX, CoorY, Field, FieldName)
+def BuildAndSaveDomainFig(CoorX, CoorY, Field, LocIni, LocEnd,TimeTxt, FieldName,FileName):
+    fig, img = PlotDomain(CoorX, CoorY, Field, FieldName, TimeTxt)
     PlotLocLine(img, LocIni, LocEnd)
-
     print("Saving figure: {}".format(FileName))
     fig.savefig(FileName, dpi = 300)
     print("\rSaved figure! {}".format(FileName))
 
-def PlotProfileInter(Dist, ProfileData, PlotTitle, Filename):
+def PlotProfileInter(Dist, ProfileData, PlotTitle, Filename, delta):
     try:
       fig = plt.figure(figsize = (10,5), constrained_layout=True)
       gs = fig.add_gridspec(1, 1)
@@ -105,21 +57,18 @@ def PlotProfileInter(Dist, ProfileData, PlotTitle, Filename):
       ax = fig.add_subplot(1,1,1)
 
     ax.set(xlabel='Distance [m]', ylabel='Displacement [m]',
-       title='Profile Plot:\n{}'.format(PlotTitle))
+       title='{}'.format(PlotTitle))
     ax.grid()
     
     plt.plot(Dist, ProfileData, 'b')
 
-
+    #ax.axvline(delta)
     print("Saving figure: {}".format(Filename))
     fig.savefig(Filename, dpi=300)
     print("\rSaved figure: {}".format(Filename))
 
 
-
-
-
-def PlotTimeProfile(TimeList, ProfileData, PlotTitle, Filename, Combined = False, Loc = None):
+def PlotTimeProfile(TimeList, ProfileData, PlotTitle, Filename, yaxisunits, Combined = False, Loc = None):
     try:
       fig = plt.figure(figsize = (10,5), constrained_layout=True)
       gs = fig.add_gridspec(1, 1)
@@ -128,7 +77,7 @@ def PlotTimeProfile(TimeList, ProfileData, PlotTitle, Filename, Combined = False
       fig = plt.figure(figsize = (10,5))
       ax = fig.add_subplot(1,1,1)
 
-    ax.set(xlabel='Time [s]', ylabel='Displacement [m]',
+    ax.set(xlabel='Time [s]', ylabel='{}'.format(yaxisunits),
        title='Profile Plot:\n{}'.format(PlotTitle))
     ax.grid()
     
@@ -136,14 +85,15 @@ def PlotTimeProfile(TimeList, ProfileData, PlotTitle, Filename, Combined = False
         plt.plot(TimeList, ProfileData, 'b')
     else:
         lines = [plt.plot(TimeList, data, c = cmap(idx/len(Loc)),
-                label = "({x},{y})".format(x=Loc[idx][0],y=Loc[idx][1])) for idx,data in enumerate(ProfileData)]
+                label = "{x}m".format(x=Loc[idx][0])) for idx,data in enumerate(ProfileData)]
         ax.legend()
     print("Saving figure: {}".format(Filename))
     fig.savefig(Filename, dpi=300)
     print("\rSaved figure: {}".format(Filename))
 
-#------------ GUI Functions -----------
 
+
+#------------ GUI Functions -----------
 class LineSlice:    
     def __init__(self, img, axList, SplineFunction, NumPoints=1000):
         self.img = img
