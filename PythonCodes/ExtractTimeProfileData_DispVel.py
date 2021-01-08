@@ -39,8 +39,8 @@ def FillObjectInTime(ListTimeProfileObj, freq, maxtimestep, fname, path, MeshFil
 
 start_time = time.time()
 
-freq = 10
-maxtimestep = 660 
+freq = 1
+maxtimestep =  901
 thickness = 150.15
 
 fname = "step-{timestep:04}_wavefield.pbin"
@@ -53,7 +53,7 @@ OutputFolder = "/home/nico/Documents/TEAR/Codes_TEAR/ProfilePicking/[TPV3]Result
 OutputFolder = "/home/nico/Documents/TEAR/Codes_TEAR/ProfilePicking/[TPV3]Results/" + GetTodayDate() + "Duo/"
 
 #Locations = [[8000,thickness],[6000,thickness],[4000,thickness],[2000,thickness],[0,thickness]]
-Locations = [[12000,-3000]]
+Locations = [[12000,-3000], [12000,3000], [3000,thickness], [6000,thickness]]
 
 ListTimeProfileObj = [SingleTimeProfile(Loc) for Loc in Locations]
 FillObjectInTime(ListTimeProfileObj, freq, maxtimestep, fname, path)

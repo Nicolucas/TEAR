@@ -40,13 +40,13 @@ def FillObjectInTime(ListTimeProfileObj, freq, maxtimestep, fname, path, TiltAng
 start_time = time.time()
 
 freq = 10
-maxtimestep = 5400 
-thickness = 50.005
+maxtimestep = 1696 
+thickness = 33.36
 TiltAngle = 45.00
 
 fname = "step-{timestep:04}_wavefield.pbin"
 #path = "/home/nico/Documents/TEAR/Codes_TEAR/plot-utils_se2wave/se2wave/"
-path = "/home/nico/Documents/TEAR/Codes_TEAR/se2dr/se2wave/"
+path = "/media/nico/Elements/Simulations/20201015/SSC-Tilting/45deg1p600x600/"
 #path = "/media/nico/Elements/Simulations/20200728/SSCdeg2/"
 OutputFolder = "/home/nico/Documents/TEAR/Codes_TEAR/ProfilePicking/Output/" + GetTodayDate() + "/"
 
