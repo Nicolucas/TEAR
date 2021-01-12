@@ -8,7 +8,7 @@ from Lib_SigmoidProcessing import *
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 LocOfInterest = [2000,4000,6000,8000]
-Thickness = 50.05
+Thickness = 25.03
 xx = np.linspace(-1.e4, 1.e4, 6001)
 
 fname = "step-{timestep:04}_wavefield.pbin"
@@ -19,7 +19,7 @@ MaxTimeStep = 2261
 freq = 10
 
 OutFolder = "/import/freenas-m-03-geodynamics/jhayek/TEAR/processing/TEAR/PythonCodes/[SSC]Sigmoid/ProcessedData/"
-OutFile = GetTodayDate()+"-T5-25x25-P1-"+str(Thickness)
+OutFile = GetTodayDate()+"-T5-25x25-P1-2-"+str(Thickness)
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 TimesList = np.arange(0,MaxTimeStep+1, freq).tolist()
