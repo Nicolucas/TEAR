@@ -8,26 +8,32 @@ from Lib_SigmoidProcessing import *
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 LocOfInterest = [2000,4000,6000,8000]
-Thickness = 25.03
-xx = np.linspace(-1.e4, 1.e4, 6001)
 
+dim = 25
+Thickness = dim*2.001
+
+NumPoints = 1200001
+xx = np.linspace(-1.e4, 1.e4, NumPoints)
+
+UniFolder = "T1"
 fname = "step-{timestep:04}_wavefield.pbin"
 
-path = "/import/freenas-m-03-geodynamics/jhayek/TEAR/Results/T5/se2wave/"
+path = "/import/freenas-m-03-geodynamics/jhayek/TEAR/Results/{}/se2wave/".format(UniFolder)
 
-MaxTimeStep = 2261
-freq = 10
+MaxTimeStep = 55400
+freq = 100
 
 OutFolder = "/import/freenas-m-03-geodynamics/jhayek/TEAR/processing/TEAR/PythonCodes/[SSC]Sigmoid/ProcessedData/"
-OutFile = GetTodayDate()+"-T5-25x25-P1-2-"+str(Thickness)
+OutFile = GetTodayDate()+"-{UniFolder}-{dim}x{dim}-P3-".format(UniFolder = UniFolder, dim = dim)+str(Thickness)
 
+print("\n>>"+OutFile)
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 TimesList = np.arange(0,MaxTimeStep+1, freq).tolist()
 
 MeshFilename = os.path.join(path, "default_mesh_coor.pbin")
 se2_coor = se2wave_load_coordinates(MeshFilename)
 
-ListFaultDataObj = Init_ListFaultDataObj(Thickness, LocOfInterest, xx, func(xx), func_der(xx))
+ListFaultDataObj = Init_ListFaultDataObj(Thickness, LocOfInterest, xx, func(xx), func_der(xx), centerIdx = int((NumPoints-1)/2.0))
 
 for i in TimesList:  
 	FieldFilename = os.path.join(path,fname.format(timestep=i))
