@@ -2,7 +2,7 @@ import os, sys, time
 import numpy as np
 from scipy.interpolate import RectBivariateSpline
 
-sys.path.insert(0,"/home/nico/Documents/TEAR/Codes_TEAR/PythonCodes/LibFolder")
+sys.path.insert(0,"/import/freenas-m-03-geodynamics/jhayek/TEAR/processing/TEAR/PythonCodes/LibFolder")
 from Lib_GeneralFunctions import *
 from Lib_ProfilePlotting import *
 from Lib_ProfileProcessing import *
@@ -39,16 +39,19 @@ def FillObjectInTime(ListTimeProfileObj, freq, maxtimestep, fname, path, TiltAng
 
 start_time = time.time()
 
-freq = 10
-maxtimestep = 1696 
-thickness = 33.36
-TiltAngle = 45.00
+freq = 1
+maxtimestep = 1809 
+thickness = 6.2500e1*2.001
+TiltAngle = 20.00
+InFolder = "T4"
 
 fname = "step-{timestep:04}_wavefield.pbin"
-#path = "/home/nico/Documents/TEAR/Codes_TEAR/plot-utils_se2wave/se2wave/"
-path = "/media/nico/Elements/Simulations/20201015/SSC-Tilting/45deg1p600x600/"
-#path = "/media/nico/Elements/Simulations/20200728/SSCdeg2/"
-OutputFolder = "/home/nico/Documents/TEAR/Codes_TEAR/ProfilePicking/Output/" + GetTodayDate() + "/"
+path = "/import/freenas-m-03-geodynamics/jhayek/TEAR/Results/{}/se2wave/".format(InFolder)
+OutputFolder = "/import/freenas-m-03-geodynamics/jhayek/TEAR/processing/TEAR/PythonCodes/[SSC]Sigmoid/ProcessedData/" + GetTodayDate() + "-Tilting/"
+
+
+OutFileName = "{InFolder}-TPList_t{timestep}_d{d}.pickle".format(InFolder=InFolder, timestep = maxtimestep, d = thickness)
+print("\nSTART: "+OutFileName)
 
 # Locations relative to the fault
 Locations = [[8000,thickness],[6000,thickness],[4000,thickness],[2000,thickness],[0,thickness]]
@@ -61,7 +64,6 @@ ListTimeProfileObj = [SingleTimeProfile(Loc) for Loc in Locations]
 [ListTimeProfileObj[idx].AddTwin(TLoc) for idx,TLoc in enumerate(TwinLocations)]
 FillObjectInTime(ListTimeProfileObj, freq, maxtimestep, fname, path, -TiltAngle)
 
-SavePickleFile(OutputFolder, "TPList_t{timestep}_d{d}.pickle".format(timestep = maxtimestep, d = thickness), 
-               ListTimeProfileObj)
+SavePickleFile(OutputFolder, OutFileName, ListTimeProfileObj)
 print("--- %s seconds ---" % (time.time() - start_time))
 
