@@ -2,7 +2,12 @@ import os, sys, time
 import numpy as np
 from scipy.interpolate import RectBivariateSpline
 
-sys.path.insert(0,"/import/freenas-m-03-geodynamics/jhayek/TEAR/processing/TEAR/PythonCodes/LibFolder")
+#sys.path.insert(0,"/import/freenas-m-03-geodynamics/jhayek/TEAR/processing/TEAR/PythonCodes/LibFolder")
+
+sys.path.insert(0,"/home/nico/Tools/petsc-3.12.5/lib/petsc/bin/")
+sys.path.insert(0,"/home/nico/Documents/TEAR/Codes_TEAR/se2dr/se2wave/utils/python/")
+sys.path.insert(0,"/home/nico/Documents/TEAR/Codes_TEAR/PythonCodes/LibFolder")
+
 from Lib_GeneralFunctions import *
 from Lib_ProfilePlotting import *
 from Lib_ProfileProcessing import *
@@ -39,18 +44,22 @@ def FillObjectInTime(ListTimeProfileObj, freq, maxtimestep, fname, path, TiltAng
 
 start_time = time.time()
 
-freq = 1
-maxtimestep = 1809 
-thickness = 6.2500e1*2.001
+#%%%%%%%%%%%%%%%%%%%%%%% Parameter Input
+freq = 10
+maxtimestep = 2040 
+thickness = 100 #25.0*1.001
 TiltAngle = 20.00
-InFolder = "T4"
+InFolder = "P6_P3_100x100_Dg"
 
 fname = "step-{timestep:04}_wavefield.pbin"
-path = "/import/freenas-m-03-geodynamics/jhayek/TEAR/Results/{}/se2wave/".format(InFolder)
-OutputFolder = "/import/freenas-m-03-geodynamics/jhayek/TEAR/processing/TEAR/PythonCodes/[SSC]Sigmoid/ProcessedData/" + GetTodayDate() + "-Tilting/"
+#path = "/import/freenas-m-03-geodynamics/jhayek/TEAR/Results/{}/se2wave/".format(InFolder)
+path = "/home/nico/Documents/TEAR/Codes_TEAR/se2dr/Runs/{}".format(InFolder)
+path = "/media/nico/Elements/Simulations/20210730-SSCTilt20-100delta/{}".format(InFolder)
 
+OutputFolder = "/home/nico/Documents/TEAR/Codes_TEAR/PythonCodes/[SSC]Sigmoid/ProcessedData/" + GetTodayDate() + "-Tilting/"
+#%%%%%%%%%%%%%%%%%%%%%%% Parameter Input
 
-OutFileName = "{InFolder}-TPList_t{timestep}_d{d}.pickle".format(InFolder=InFolder, timestep = maxtimestep, d = thickness)
+OutFileName = "{InFolder}-PdepBlend-TPList_t{timestep}_d{d}.pickle".format(InFolder=InFolder, timestep = maxtimestep, d = thickness)
 print("\nSTART: "+OutFileName)
 
 # Locations relative to the fault
