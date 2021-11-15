@@ -54,7 +54,6 @@ def GetProfileData(LocIni,LocEnd,NumPoints, SplineFunction):
     return ArrayDist, CompX, CompY
 
 def GetLocData(Loc, SplineFunction, GetSlip=False):
-    x0,y0 = Loc[0],Loc[1]
 
     CompX = SplineFunction[0](Loc[0],Loc[1])[0][0]
     CompY = SplineFunction[1](Loc[0],Loc[1])[0][0]
@@ -66,13 +65,13 @@ def GetLocData(Loc, SplineFunction, GetSlip=False):
 
     return CompX, CompY
 
-def GetOnlyLocData(Loc, SplineFunction, GetSlip=False):
-    x0,y0 = Loc[0],Loc[1]
-
+def GetOnlyLocData(Loc, SplineFunction):
     CompX = SplineFunction[0](Loc[0],Loc[1])[0][0]
     CompY = SplineFunction[1](Loc[0],Loc[1])[0][0]
     
     return CompX, CompY
+
+
 
 
 
@@ -111,3 +110,5 @@ class SingleTimeProfile:
         print("Velocity:")
         print(self.VelX)
         print(self.VelY)
+
+

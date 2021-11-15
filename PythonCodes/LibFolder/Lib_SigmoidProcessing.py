@@ -58,6 +58,10 @@ def GetLocData(Loc, SplineFunction, GetSlip=False):
     CompY = SplineFunction[1](Loc[0],Loc[1])[0][0]
     return CompX, CompY
 
+def GetReceiverListData(ReceiverList,SplineFunction):
+    CompX = [SplineFunction[0](LocCoord[0], LocCoord[1])[0][0] for LocCoord in ReceiverList]
+    CompY = [SplineFunction[1](LocCoord[0], LocCoord[1])[0][0] for LocCoord in ReceiverList]
+    return CompX, CompY
 
 # Wrappers
 def GetSplineFunctions(w_filename, se2_coor):
@@ -202,3 +206,63 @@ def PopulateListFaultDataObj_w_Fields(ListFaultDataObj, w_filename, se2_coor):
         FaultDataObj.appendFaultValues(TimeStep, Slip, SlipRate)
         
     return ListFaultDataObj
+
+
+class SingleReceiver:
+    def __init__(self,Coord):
+        self.Coord = Coord
+        self.Time = []
+        self.DispX = []
+        self.DispY = []
+        self.VelX = []
+        self.VelY = []
+    
+    def __repr__(self):
+        return "Single Receiver ({})".format(self.Coord)
+    
+    def __str__(self):
+        return "Time Receiver Object at coord: {}".format(self.Coord)
+
+
+    def appendFieldValues(self, time, dispx, dispy, velx, vely):
+        self.Time.append(time)
+        self.DispX.append(dispx)
+        self.DispY.append(dispy)
+        self.VelX.append(velx)
+        self.VelY.append(vely)
+    
+    def PrintValues(self):
+        print("Coordinate:")
+        print(self.Coord)
+        print("Displacement:")
+        print(self.DispX)
+        print(self.DispY)
+        print("Velocity:")
+        print(self.VelX)
+        print(self.VelY)
+
+
+def PopulateReceiverListObj(w_filename, se2_coor, ReceiverList, ListReceiversObj):
+    # Load wavefield file
+    se2_field = se2wave_load_wavefield(w_filename,True,True)
+
+    # Separate field components into matrices and variables
+    
+    LCoorX, LCoorY = SeparateList(se2_coor['coor'], se2_coor['nx'].item(), se2_coor['ny'].item())
+    Time = se2_field["time"].item()
+    LField_X, LField_Y = SeparateList(se2_field['displ'], se2_field['nx'].item(), se2_field['ny'].item())
+    LField_V, LField_VY = SeparateList(se2_field['vel'], se2_field['nx'].item(), se2_field['ny'].item())
+
+    # Create the SPline function in a specific Field
+    SplineFunction = [RectBivariateSpline(LCoorX[:,0], LCoorY[0,:], LField_X), 
+                    RectBivariateSpline(LCoorX[:,0], LCoorY[0,:], LField_Y)]
+
+    VelSplineFunction = [RectBivariateSpline(LCoorX[:,0], LCoorY[0,:], LField_V), 
+                        RectBivariateSpline(LCoorX[:,0], LCoorY[0,:], LField_VY)]
+
+    U_X,U_Y = GetReceiverListData(ReceiverList,SplineFunction)
+    V_X,V_Y = GetReceiverListData(ReceiverList,VelSplineFunction)
+
+    [Receiver.appendFieldValues(Time, U_X[i], U_Y[i], V_X[i], V_Y[i]) for i, Receiver in enumerate(ListReceiversObj)]
+
+    return ListReceiversObj
