@@ -34,3 +34,24 @@ def FontSizeControlFreak(SMALL_SIZE,MEDIUM_SIZE,BIGGER_SIZE):
     plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
     plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
     plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+
+
+def GetListPatternFiles(path,fname,ToFormat):
+    """Extract a list of timesteps (or any differences) in a common pattern filename within a directory path. Gets the list of strings cleaned from the pattern and sorted.
+
+    Args:
+        path (string): path to folder where the filename pattern is found
+        fname (string): filename with a common pattern
+        ToFormat (string): pattern placeholder e.g. {timestep:04} in {timestep:04}_wavefield.pbin
+
+    Returns:
+        String list: List of the differences in the pattern i.e. extract the string 
+    """
+    FindFilename_ = fname.replace(ToFormat,"*")
+    PathNFile_ = os.path.join(path,FindFilename_)
+    print(PathNFile_)
+
+    FileList_ = glob(PathNFile_)
+    list_ = [i.replace(PathNFile_.split('*')[0],'').replace(PathNFile_.split('*')[1],'') for i in FileList_]
+
+    return sorted(list_)
