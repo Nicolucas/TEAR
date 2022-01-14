@@ -18,6 +18,13 @@ import pandas as pd
 from mpl_toolkits.axes_grid1 import ImageGrid
 from mpl_toolkits.axes_grid1.inset_locator import (inset_axes, InsetPosition,mark_inset)
 
+import string
+
+def LabelizeAxisList(AxisList,Pos=[-0.1, 1.1],**kwargs):
+    for n, ax in enumerate(AxisList):  
+        ax.text(Pos[0], Pos[1], string.ascii_uppercase[n], transform=ax.transAxes, **kwargs)
+
+
 
 # Sigmoid or any function of interest to represent the center of the fault / Zero level set function
 def func(x, k=-0.0002, amp = 2.0):
@@ -130,6 +137,11 @@ def FormatAx(ax):
     ax.yaxis.major.formatter.set_powerlimits((0,0)) 
     ax.xaxis.major.formatter.set_powerlimits((0,0)) 
 
+def FormatAxNormal(ax):
+    ax.set_aspect("equal")
+    ax.xaxis.set_major_locator(MaxNLocator(5))
+    ax.yaxis.set_major_locator(MaxNLocator(5))
+
 def PlotDomain(CoorX, CoorY, Field, FieldName,TimeTxt,**kwargs):
     try:
       fig = plt.figure(figsize = (10, 10),dpi=300, constrained_layout=True)
@@ -143,14 +155,14 @@ def PlotDomain(CoorX, CoorY, Field, FieldName,TimeTxt,**kwargs):
     ax.set_aspect('equal', 'box')
     img = ax.pcolormesh(CoorX, CoorY, Field,**kwargs)
 
-    ax.annotate(text="T:{0:.2f}s".format(TimeTxt),xy=[0.8,0.1], xycoords= "axes fraction")
+    ax.annotate(text="t: {0:.2f} s".format(TimeTxt),xy=[0.8,0.1], xycoords= "axes fraction")
     cbar = fig.colorbar(img, shrink=.5)
     cbar.ax.set_ylabel(FieldName[1])
     
     return fig, img,ax
 
 
-def PlotFullSetup(CoorX, CoorY, Field1, Field2, Field3, FieldNames,TimeTxt,InsetZoom=[6250,6750,3400,3900],**kwargs):    
+def PlotFullSetup(CoorX, CoorY, Field1, Field2, StressFromPickle, FieldNames,TimeTxt,InsetZoom=[6250,6750,3400,3900],**kwargs):    
     fig = plt.figure(figsize = (12, 8),dpi=300) #constrained_layout=True
     gs = fig.add_gridspec(2, 3, wspace=0.15,hspace=0.2)
 
@@ -162,11 +174,11 @@ def PlotFullSetup(CoorX, CoorY, Field1, Field2, Field3, FieldNames,TimeTxt,Inset
     ax2 = fig.add_subplot(gs[-1, 1])
     ax3 = fig.add_subplot(gs[-1, 2])
        
-    ax = [ax01,ax02,ax03,ax1,ax2,ax3]
+    
     #Plot
     #ax1.set_title("{FName}".format(FName = FieldNames[0]))
-    ax2.set_xlabel("X-Coordinate [m]")
-    ax1.set_ylabel("Y-Coordinate [m]")
+    ax2.set_xlabel("$x$ [m]")
+    ax1.set_ylabel("$y$ [m]")
     
     FormatAx(ax1)
     FormatAx(ax2)
@@ -174,27 +186,43 @@ def PlotFullSetup(CoorX, CoorY, Field1, Field2, Field3, FieldNames,TimeTxt,Inset
         
     img1 = ax1.pcolormesh(CoorX, CoorY, Field1,**kwargs)
     img2 = ax2.pcolormesh(CoorX, CoorY, Field2,**kwargs)
-    img3 = ax3.pcolormesh(CoorX, CoorY, Field3,**kwargs)
+    img3 = ax3.pcolormesh(StressFromPickle[0], StressFromPickle[1], StressFromPickle[2], shading="flat",
+                          vmax = 2e7, vmin= -2e7, **kwargs)
     
     ax2.tick_params(labelleft=False)
     ax3.tick_params(labelleft=False)
     
     ax2.yaxis.get_major_formatter().set_scientific(False)
     ax3.yaxis.get_major_formatter().set_scientific(False)
-    ax1.annotate(text="T:{0:.2f}s".format(TimeTxt),xy=[0.05,0.9], xycoords= "axes fraction")
+    ax1.annotate(text="t: {0:.2f} s".format(TimeTxt),xy=[0.05,0.9], xycoords= "axes fraction")
     
+    # Colorbar for the ax1
     cbaxes = inset_axes(ax1,width="40%",height="4%",loc=3, borderpad=2)
-    plt.colorbar(img1,cax=cbaxes,orientation="horizontal", label=r"U$_{x}$ [m]")
+    plt.colorbar(img1,cax=cbaxes,orientation="horizontal", label=r"$u_{x}$ [m]")
     cbaxes.xaxis.set_label_position('top')
     
+    # Colorbar for the ax2
     cbaxes = inset_axes(ax2,width="40%",height="4%",loc=3, borderpad=2)
-    plt.colorbar(img2,cax=cbaxes,orientation="horizontal", label=r"V$_{x}$ [m/s]")
+    plt.colorbar(img2,cax=cbaxes,orientation="horizontal", label=r"$v_{x}$ [m/s]")
     cbaxes.xaxis.set_label_position('top')
     
+    # Colorbar for the ax3
     cbaxes = inset_axes(ax3,width="40%",height="4%",loc=3, borderpad=2)
-    plt.colorbar(img3,cax=cbaxes,orientation="horizontal", label=r"S$_{12}$ [Pa]")
+    plt.colorbar(img3,cax=cbaxes,orientation="horizontal", label=r"$\sigma_{12}$ [Pa]")
     cbaxes.xaxis.set_label_position('top')
+
+    # Give the number of ticks in the colorbar
+    cbaxes.xaxis.set_major_locator(MaxNLocator(4))
+
+    # Give an offset for the scientific notation exponent
+    cbaxes.get_xaxis().get_offset_text().set_visible(False)
+    ax_max = max(cbaxes.get_xticks())
+    exponent_axis = np.floor(np.log10(ax_max)).astype(int)
+    cbaxes.annotate(r'$\times$10$^{%i}$'%(exponent_axis),
+                xy=(1.01, -.01), xycoords='axes fraction')
     
+
+    # Inset plot for the ax2
     axins = ax2.inset_axes([0.65, 0.05, 0.3, 0.3])
     axins.pcolormesh(CoorX, CoorY, Field2, edgecolors='silver',lw='0.1', **kwargs)
     
@@ -203,15 +231,113 @@ def PlotFullSetup(CoorX, CoorY, Field1, Field2, Field3, FieldNames,TimeTxt,Inset
     axins.set_xticklabels('')
     axins.set_yticklabels('')
     
-    #axins.grid(True, which='both', axis='both', linestyle='-', color='k')
     mark_inset(ax2, axins,loc1=2, loc2=1, edgecolor="black",ec=".5",linewidth=.5)
+
+
+    # Inset plot for the ax3
+    axins = ax3.inset_axes([0.65, 0.05, 0.3, 0.3])
+    axins.pcolormesh(StressFromPickle[0], StressFromPickle[1], StressFromPickle[2], shading="flat", edgecolors='silver',lw='0.1',
+                     vmax = 2e7, vmin= -2e7, **kwargs)
+    
+    axins.set_xlim(InsetZoom[0], InsetZoom[1])
+    axins.set_ylim(InsetZoom[2], InsetZoom[3])
+    axins.set_xticklabels('')
+    axins.set_yticklabels('')
+    mark_inset(ax3, axins,loc1=2, loc2=1, edgecolor="black",ec=".5",linewidth=.5)
 
     gs.tight_layout(fig)
     gs.update(top=0.95)
     
+    ax = [ax01,ax02,ax03,ax1,ax2,ax3]
     #cbar.ax.set_ylabel(FieldName[1])
     return fig, ax
 
+def PlotHalfSetup(CoorX, CoorY, Field1, Field2, StressFromPickle, FieldNames,TimeTxt,InsetZoom=[6250,6750,3400,3900],**kwargs):    
+    fig = plt.figure(figsize = (12, 4),dpi=300) #constrained_layout=True
+    gs = fig.add_gridspec(1, 3, wspace=0.15,hspace=0.2)
+
+
+    ax1 = fig.add_subplot(gs[0, 0])
+    ax2 = fig.add_subplot(gs[0, 1])
+    ax3 = fig.add_subplot(gs[0, 2])
+       
+    
+    #Plot
+    #ax1.set_title("{FName}".format(FName = FieldNames[0]))
+    ax2.set_xlabel("$x$ [m]")
+    ax1.set_ylabel("$y$ [m]")
+    
+    FormatAx(ax1)
+    FormatAx(ax2)
+    FormatAx(ax3)
+        
+    img1 = ax1.pcolormesh(CoorX, CoorY, Field1,**kwargs)
+    img2 = ax2.pcolormesh(CoorX, CoorY, Field2,**kwargs)
+    img3 = ax3.pcolormesh(StressFromPickle[0], StressFromPickle[1], StressFromPickle[2], shading="flat",
+                          vmax = 2e7, vmin= -2e7, **kwargs)
+    
+    ax2.tick_params(labelleft=False)
+    ax3.tick_params(labelleft=False)
+    
+    ax2.yaxis.get_major_formatter().set_scientific(False)
+    ax3.yaxis.get_major_formatter().set_scientific(False)
+    ax1.annotate(text="t: {0:.2f} s".format(TimeTxt),xy=[0.05,0.9], xycoords= "axes fraction")
+    
+    # Colorbar for the ax1
+    cbaxes = inset_axes(ax1,width="40%",height="4%",loc=3, borderpad=2)
+    plt.colorbar(img1,cax=cbaxes,orientation="horizontal", label=r"$u_{x}$ [m]")
+    cbaxes.xaxis.set_label_position('top')
+    
+    # Colorbar for the ax2
+    cbaxes = inset_axes(ax2,width="40%",height="4%",loc=3, borderpad=2)
+    plt.colorbar(img2,cax=cbaxes,orientation="horizontal", label=r"$v_{x}$ [m/s]")
+    cbaxes.xaxis.set_label_position('top')
+    
+    # Colorbar for the ax3
+    cbaxes = inset_axes(ax3,width="40%",height="4%",loc=3, borderpad=2)
+    plt.colorbar(img3,cax=cbaxes,orientation="horizontal", label=r"$\sigma_{12}$ [Pa]")
+    cbaxes.xaxis.set_label_position('top')
+
+    # Give the number of ticks in the colorbar
+    cbaxes.xaxis.set_major_locator(MaxNLocator(4))
+
+    # Give an offset for the scientific notation exponent
+    cbaxes.get_xaxis().get_offset_text().set_visible(False)
+    ax_max = max(cbaxes.get_xticks())
+    exponent_axis = np.floor(np.log10(ax_max)).astype(int)
+    cbaxes.annotate(r'$\times$10$^{%i}$'%(exponent_axis),
+                xy=(1.01, -.01), xycoords='axes fraction')
+    
+
+    # Inset plot for the ax2
+    axins = ax2.inset_axes([0.65, 0.05, 0.3, 0.3])
+    axins.pcolormesh(CoorX, CoorY, Field2, edgecolors='silver',lw='0.1', **kwargs)
+    
+    axins.set_xlim(InsetZoom[0], InsetZoom[1])
+    axins.set_ylim(InsetZoom[2], InsetZoom[3])
+    axins.set_xticklabels('')
+    axins.set_yticklabels('')
+    
+    mark_inset(ax2, axins,loc1=2, loc2=1, edgecolor="black",ec=".5",linewidth=.5)
+
+
+    # Inset plot for the ax3
+    axins = ax3.inset_axes([0.65, 0.05, 0.3, 0.3])
+    axins.pcolormesh(StressFromPickle[0], StressFromPickle[1], StressFromPickle[2], shading="flat", edgecolors='silver',lw='0.1',
+                     vmax = 2e7, vmin= -2e7, **kwargs)
+    
+    axins.set_xlim(InsetZoom[0], InsetZoom[1])
+    axins.set_ylim(InsetZoom[2], InsetZoom[3])
+    axins.set_xticklabels('')
+    axins.set_yticklabels('')
+    mark_inset(ax3, axins,loc1=2, loc2=1, edgecolor="black",ec=".5",linewidth=.5)
+
+    #gs.tight_layout(fig)
+    #gs.update(top=0.95)
+    
+    ax = [ax1,ax2,ax3]
+    #cbar.ax.set_ylabel(FieldName[1])
+    return fig, ax
 
 def Plot4KomaSetup(CoorX, CoorY, Field1, Field2, FieldNames,TimeTxt,InsetZoom=[6250,6750,3400,3900],**kwargs):    
     fig = plt.figure(figsize = (8, 8),dpi=300) #constrained_layout=True
@@ -226,9 +352,9 @@ def Plot4KomaSetup(CoorX, CoorY, Field1, Field2, FieldNames,TimeTxt,InsetZoom=[6
     ax = [ax01,ax02,ax1,ax2]
     #Plot
     #ax1.set_title("{FName}".format(FName = FieldNames[0]))
-    ax2.set_xlabel("X-Coordinate [m]")
-    ax1.set_xlabel("X-Coordinate [m]")
-    ax1.set_ylabel("Y-Coordinate [m]")
+    ax2.set_xlabel("$x$ [m]")
+    ax1.set_xlabel("$x$ [m]")
+    ax1.set_ylabel("$y$ [m]")
     
     FormatAx(ax1)
     FormatAx(ax2)
@@ -239,17 +365,17 @@ def Plot4KomaSetup(CoorX, CoorY, Field1, Field2, FieldNames,TimeTxt,InsetZoom=[6
     ax2.tick_params(labelleft=False)
     
     ax2.yaxis.get_major_formatter().set_scientific(False)
-    ax1.annotate(text="T:{0:.2f}s".format(TimeTxt),xy=[0.05,0.9], xycoords= "axes fraction")
+    ax1.annotate(text="t: {0:.2f} s".format(TimeTxt),xy=[0.05,0.9], xycoords= "axes fraction")
     
     cbaxes = inset_axes(ax1, width="40%",height="4%",loc=3, borderpad=2)
-    plt.colorbar(img1,cax=cbaxes,orientation="horizontal", label=r"U$_{x}$ [m]")
+    plt.colorbar(img1,cax=cbaxes,orientation="horizontal", label=r"$u_{x}$ [m]")
     cbaxes.xaxis.set_label_position('top')
     
     cbaxes = inset_axes(ax2, width="40%",height="4%",loc=3, borderpad=2)
-    plt.colorbar(img2,cax=cbaxes,orientation="horizontal", label=r"V$_{x}$ [m/s]")
+    plt.colorbar(img2,cax=cbaxes,orientation="horizontal", label=r"$v_{x}$ [m/s]")
     cbaxes.xaxis.set_label_position('top')
     
-    
+      
     axins = ax2.inset_axes([0.65, 0.05, 0.3, 0.3])
     axins.pcolormesh(CoorX, CoorY, Field2, edgecolors='silver',lw='0.1', **kwargs)
     
@@ -267,7 +393,7 @@ def Plot4KomaSetup(CoorX, CoorY, Field1, Field2, FieldNames,TimeTxt,InsetZoom=[6
     #cbar.ax.set_ylabel(FieldName[1])
     return fig, ax
 
-def PlotF4Setup(CoorX, CoorY, Field1, Field2, FieldNames,TimeTxt,InsetZoom=[6250,6750,3400,3900],**kwargs):    
+def PlotF4Setup(CoorX, CoorY, Field1, StressFromPickle, FieldNames,TimeTxt,InsetZoom=[6250,6750,3400,3900],**kwargs):    
     fig = plt.figure(figsize = (8, 8),dpi=300) #constrained_layout=True
     gs = fig.add_gridspec(2, 2, wspace=0.15,hspace=0.2)
 
@@ -280,30 +406,43 @@ def PlotF4Setup(CoorX, CoorY, Field1, Field2, FieldNames,TimeTxt,InsetZoom=[6250
     ax = [ax01,ax02,ax1,ax2]
     #Plot
     #ax1.set_title("{FName}".format(FName = FieldNames[0]))
-    ax2.set_xlabel("X-Coordinate [m]")
-    ax1.set_xlabel("X-Coordinate [m]")
-    ax1.set_ylabel("Y-Coordinate [m]")
+    ax2.set_xlabel("$x$ [m]")
+    ax1.set_xlabel("$x$ [m]")
+    ax1.set_ylabel("$y$ [m]")
     
     FormatAx(ax1)
     FormatAx(ax2)
         
     img1 = ax1.pcolormesh(CoorX, CoorY, Field1,**kwargs)
-    img2 = ax2.pcolormesh(CoorX, CoorY, Field2,**kwargs)
+    img2 = ax2.pcolormesh(StressFromPickle[0], StressFromPickle[1], StressFromPickle[2], shading="flat",
+                          vmax = 2e7, vmin= -2e7, **kwargs)
     
     ax2.tick_params(labelleft=False)
     
     ax2.yaxis.get_major_formatter().set_scientific(False)
-    ax1.annotate(text="T:{0:.2f}s".format(TimeTxt),xy=[0.05,0.9], xycoords= "axes fraction")
+    ax1.annotate(text="t: {0:.2f} s".format(TimeTxt),xy=[0.05,0.9], xycoords= "axes fraction")
     
+    # Colorbar for the ax1
     cbaxes = inset_axes(ax1, width="40%",height="4%",loc=3, borderpad=2)
-    plt.colorbar(img1,cax=cbaxes,orientation="horizontal", label=r"U$_{x}$ [m]")
+    plt.colorbar(img1,cax=cbaxes,orientation="horizontal", label=r"$v_{x}$ [m/s]")
     cbaxes.xaxis.set_label_position('top')
     
+    # Colorbar for the ax2
     cbaxes = inset_axes(ax2, width="40%",height="4%",loc=3, borderpad=2)
-    plt.colorbar(img2,cax=cbaxes,orientation="horizontal", label=r"V$_{x}$ [m/s]")
+    plt.colorbar(img2,cax=cbaxes,orientation="horizontal", label=r"$\sigma_{12}$ [Pa]")
     cbaxes.xaxis.set_label_position('top')
+
+    # Give the number of ticks in the colorbar
+    cbaxes.xaxis.set_major_locator(MaxNLocator(4))
+
+    # Give an offset for the scientific notation exponent
+    cbaxes.get_xaxis().get_offset_text().set_visible(False)
+    ax_max = max(cbaxes.get_xticks())
+    exponent_axis = np.floor(np.log10(ax_max)).astype(int)
+    cbaxes.annotate(r'$\times$10$^{%i}$'%(exponent_axis),
+                xy=(1.01, -.01), xycoords='axes fraction')
     
-    
+    # Inset plot for the ax1
     axins = ax1.inset_axes([0.65, 0.05, 0.3, 0.3])
     axins.pcolormesh(CoorX, CoorY, Field1, edgecolors='silver',lw='0.1', **kwargs)
     
@@ -314,8 +453,10 @@ def PlotF4Setup(CoorX, CoorY, Field1, Field2, FieldNames,TimeTxt,InsetZoom=[6250
     
     mark_inset(ax1, axins,loc1=2, loc2=1, edgecolor="black",ec="0.5",linewidth=.5)
     
+    # Inset plot for the ax2
     axins2 = ax2.inset_axes([0.65, 0.05, 0.3, 0.3])
-    axins2.pcolormesh(CoorX, CoorY, Field2, edgecolors='silver',lw='0.1', **kwargs)
+    axins2.pcolormesh(StressFromPickle[0], StressFromPickle[1], StressFromPickle[2], shading="flat", edgecolors='silver',lw='0.1',
+                      vmax = 2e7, vmin= -2e7, **kwargs)
     
     axins2.set_xlim(InsetZoom[0], InsetZoom[1])
     axins2.set_ylim(InsetZoom[2], InsetZoom[3])
@@ -324,18 +465,19 @@ def PlotF4Setup(CoorX, CoorY, Field1, Field2, FieldNames,TimeTxt,InsetZoom=[6250
     
     mark_inset(ax2, axins2,loc1=2, loc2=1, edgecolor="black",ec="0.5",linewidth=.5)
     
+    # Inset plot for the ax2 (centered)
+    # scaling = (InsetZoom[1]-InsetZoom[0])*0.5
+    # InsetZoom2=[-scaling,scaling,-scaling,scaling]
     
-    InsetZoom2=[-125,125,-125,125]
+    # axins3 = ax2.inset_axes([0.05, 0.65, 0.3, 0.3])
+    # axins3.pcolormesh(StressFromPickle[0], StressFromPickle[1], StressFromPickle[2], shading="flat", edgecolors='silver',lw='0.1', **kwargs)
     
-    axins3 = ax2.inset_axes([0.05, 0.65, 0.3, 0.3])
-    axins3.pcolormesh(CoorX, CoorY, Field2, edgecolors='silver',lw='0.1', **kwargs)
+    # axins3.set_xlim(InsetZoom2[0], InsetZoom2[1])
+    # axins3.set_ylim(InsetZoom2[2], InsetZoom2[3])
+    # axins3.set_xticklabels('')
+    # axins3.set_yticklabels('')
     
-    axins3.set_xlim(InsetZoom2[0], InsetZoom2[1])
-    axins3.set_ylim(InsetZoom2[2], InsetZoom2[3])
-    axins3.set_xticklabels('')
-    axins3.set_yticklabels('')
-    
-    mark_inset(ax2, axins3,loc1=1, loc2=3, edgecolor="black",ec="0.5",linewidth=.5)
+    # mark_inset(ax2, axins3,loc1=3, loc2=1, edgecolor="black",ec="0.5",linewidth=.5)
 
     gs.tight_layout(fig)
     gs.update(top=0.95)
@@ -400,11 +542,11 @@ class TPV3reference:
     
     # Default object printing information
     def __repr__(self):
-        return "The TPV3reference object was generated from: {} and the receiver is located at {}".format(self.RefSource, self.Coord)
+        return "The TPV3 reference object was generated from: {} and the receiver is located at {}".format(self.RefSource, self.Coord)
     #end __repr__
     
     def __str__(self):
-        return "The TPV3reference object was generated from: {} and the receiver is located at {}".format(self.RefSource, self.Coord)
+        return "The TPV3 reference object was generated from: {} and the receiver is located at {}".format(self.RefSource, self.Coord)
     #end __str__
     
     def PlotReference(self, ax, SlipSlipRate, filtering=True, **kwargs):
@@ -432,6 +574,7 @@ def GenericFigAxis():
     
     return fig, [ax1, ax2]
     
+
 def formatGivenAxes(AxesList,inverted=False):
     for i, ax in enumerate(AxesList):
         ax.set_xlim(-.2,4)
@@ -446,7 +589,7 @@ def formatGivenAxes(AxesList,inverted=False):
                 
     Lines = AxesList[-1].get_lines()
     
-    ReceiversLabelList = ['0km','2km','4km', '6km', '8km']
+    ReceiversLabelList = ['0 km','2 km','4 km', '6 km', '8 km']
     if (inverted):
         ReceiversLabelList.reverse()
       
@@ -464,7 +607,7 @@ def formatGivenAxes(AxesList,inverted=False):
     legendContDisc = AxesList[1].legend(LinesContDisc, ["SEM2DPACK","se2dr"], loc = 2)
     AxesList[1].add_artist(legendContDisc)
     
-    AxesList[1].set_ylabel("Slip Rate [m/s]")
+    AxesList[1].set_ylabel("Slip rate [m/s]")
     AxesList[0].set_ylabel("Slip [m]")
     
 
@@ -488,8 +631,5 @@ def Multi_format_axes(fig,cmap, LabelsPerColor):
     
     legend2 = fig.axes[-1].legend(Lines, LabelsPerColor, loc = 2)
     fig.axes[-1].add_artist(legend2)
-    fig.axes[-1].set_ylabel("Slip Rate (m/s)")
+    fig.axes[-1].set_ylabel("Slip rate (m/s)")
     fig.axes[0].set_ylabel("Slip (m)")
-    
-
-    
