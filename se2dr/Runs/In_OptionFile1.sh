@@ -20,7 +20,7 @@ mkdir -p $STORAGE_VAR_NAME
 
 #(cd $STORAGE_VAR_NAME && $SE2DR_RUN -mx 200 -my 200 -tmax 4 -bdegree 1 -delta_cell_factor 1.001 -of 10)
 #(cd $STORAGE_VAR_NAME && $SE2DR_RUN -mx 400 -my 400 -tmax 4 -bdegree 1 -delta_cell_factor 1.001 -of 10)
-(cd $STORAGE_VAR_NAME && $SE2DR_RUN -mx 400 -my 400 -tmax 4 -bdegree 3 -delta 25 -of 10)
+(cd $STORAGE_VAR_NAME && $SE2DR_RUN -mx 400 -my 400 -tmax 4 -bdegree 3 -delta 50 -of 10)
 
 # Debug~~
 #valgrind --tool=memcheck --leak-check=full ./se2dr.app -mx 200 -my 200 -tmax 4.0 -bdegree 2 -delta_cell_factor 1.001 -of 10
