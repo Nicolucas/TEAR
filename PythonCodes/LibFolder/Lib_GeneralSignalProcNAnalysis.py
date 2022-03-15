@@ -20,4 +20,5 @@ def CalculateFFT(Data, sampling = 0.005, TMax = 4.0):
     yf = fft(Data)
     xf = np.linspace(0.0, 1.0/(2.0*sampling), N//2)
     yf = 2.0/N * np.abs(yf[0:N//2])
+    
     return(xf,yf)
