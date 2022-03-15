@@ -50,7 +50,6 @@ path = "/home/nico/Documents/TEAR/Codes_TEAR/se2dr/se2wave/"
 OutputFolder = "/home/nico/Documents/TEAR/Codes_TEAR/ProfilePicking/Output/" + GetTodayDate() + "/"
 OutputFolder = "/home/nico/Documents/TEAR/Codes_TEAR/ProfilePicking/[TPV3]Results/" + GetTodayDate() + "/"
 
-OutputFolder = "/home/nico/Documents/TEAR/Codes_TEAR/ProfilePicking/[TPV3]Results/" + GetTodayDate() + "Duo/"
 
 #Locations = [[8000,thickness],[6000,thickness],[4000,thickness],[2000,thickness],[0,thickness]]
 Locations = [[12000,-3000], [12000,3000], [3000,thickness], [6000,thickness]]

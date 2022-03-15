@@ -52,6 +52,6 @@ def GetListPatternFiles(path,fname,ToFormat):
     print(PathNFile_)
 
     FileList_ = glob(PathNFile_)
-    list_ = [i.replace(PathNFile_.split('*')[0],'').replace(PathNFile_.split('*')[1],'') for i in FileList_]
+    list_ = [int(i.replace(PathNFile_.split('*')[0],'').replace(PathNFile_.split('*')[1],'')) for i in FileList_]
 
     return sorted(list_)
