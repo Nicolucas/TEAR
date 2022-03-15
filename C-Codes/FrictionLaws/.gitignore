@@ -1,0 +1,8 @@
+*.o
+*.dSYM
+fl_tester
+stress_sandbox
+*.png
+*.txt
+*.dat
+*.pickle

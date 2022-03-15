@@ -25,9 +25,18 @@ def Receiver2Spectrogram(Receiver, AmplitudeList, yLabel="", **kwargs):
 
     samplingrate = len(Amplitude)/time.max()
 
-    fig = plt.figure(figsize = (10, 5),dpi=300, constrained_layout=True)
-    gs = fig.add_gridspec(1, 1)
-    ax = fig.add_subplot(gs[:, :])
+    AxOut = kwargs.get("ax",None)
+    if  AxOut == None:
+
+        fig = plt.figure(figsize = (10, 5),dpi=300, constrained_layout=True)
+        gs = fig.add_gridspec(1, 1)
+        ax = fig.add_subplot(gs[:, :])
+        
+        fig.suptitle('Spectrogram, st {}'.format(Receiver.Coord))
+    else:
+        kwargs.pop("ax")
+        ax = AxOut
+        
     ax2 = ax.twinx()
 
     spectrogram.spectrogram(Amplitude,samplingrate,log=True,axes=ax,show=False,**kwargs)
@@ -44,14 +53,16 @@ def Receiver2Spectrogram(Receiver, AmplitudeList, yLabel="", **kwargs):
     cbaxes.xaxis.label.set_color('white')
     cbaxes.tick_params(labelcolor='white')
 
-    ax2.plot(time, Amplitude, lw=2, c='r')
+    ax2.plot(time, Amplitude, lw=1, c='k')
     #ax2.ticklabel_format(axis='both', style='sci', scilimits=(0,0))
     ax2.set_ylim([0,9])
     ax2.set_ylabel(yLabel)
 
-    fig.suptitle('Spectrogram, st {}'.format(Receiver.Coord))
-
-    return fig, ax, ax2
+    
+    if AxOut == None:
+        return fig, ax, ax2
+    else:
+        return ax, ax2
 
 
 

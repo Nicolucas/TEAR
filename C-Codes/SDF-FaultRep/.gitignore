@@ -1,0 +1,8 @@
+*.o
+*.dSYM
+fuzzyfaultdemo1
+*.png
+*.txt
+*.dat
+*.pickle
+*.info
