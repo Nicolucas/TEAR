@@ -1,0 +1,90 @@
+import os, time, sys
+import numpy as np
+from scipy.interpolate import RectBivariateSpline
+
+sys.path.insert(0,"/import/freenas-m-03-geodynamics/jhayek/petsc-3.12.5/lib/petsc/bin/")
+sys.path.insert(0,"/import/freenas-m-03-geodynamics/jhayek/TEAR/se2wave/utils/python")
+sys.path.insert(0,"/import/freenas-m-03-geodynamics/jhayek/TEAR/processing/TEAR/PythonCodes/LibFolder")
+
+
+from Lib_GeneralFunctions import *
+from Lib_ProfilePlotting import *
+from Lib_ProfileProcessing import *
+
+from se2waveload import *
+
+def ExtractFieldsPerTS(ListTimeProfileObj, w_filename, se2_coor):
+    se2_field = se2wave_load_wavefield(w_filename,True,True)
+    TimeStep = se2_field["time"].item()
+
+    LCoorX, LCoorY = SeparateList(se2_coor['coor'], se2_coor['nx'].item(), se2_coor['ny'].item())
+    LFieldX, LFieldY = SeparateList(se2_field['displ'], se2_field['nx'].item(), se2_field['ny'].item())
+    LFieldvelX, LFieldvelY = SeparateList(se2_field['vel'], se2_field['nx'].item(), se2_field['ny'].item())
+
+    SplineDispl = [RectBivariateSpline(LCoorX[:,0], LCoorY[0,:], LFieldX, kx=1, ky=1), 
+                    RectBivariateSpline(LCoorX[:,0], LCoorY[0,:], LFieldY, kx=1, ky=1)]
+    SplineVel = [RectBivariateSpline(LCoorX[:,0], LCoorY[0,:], LFieldvelX, kx=1, ky=1), 
+                    RectBivariateSpline(LCoorX[:,0], LCoorY[0,:], LFieldvelY, kx=1, ky=1)]
+    for OBJitem in ListTimeProfileObj:
+        CompDispX,CompDispY = GetOnlyLocData(OBJitem.Coord, SplineDispl)
+        CompvelX,CompVelY = GetOnlyLocData(OBJitem.Coord, SplineVel)
+        OBJitem.appendFieldValues(TimeStep, CompDispX, CompDispY, CompvelX, CompVelY)
+ 
+def FillObjectInTime(ListTimeProfileObj, freq, maxtimestep, fname, path, MeshFilename = "default_mesh_coor.pbin"):
+    TSList = np.arange(0, maxtimestep+1, freq).tolist()
+    FilenameList = [os.path.join(path,fname.format(timestep=i)) for i in TSList]
+
+    filename = os.path.join(path, MeshFilename)
+    se2_coor = se2wave_load_coordinates(filename)
+
+    [ExtractFieldsPerTS(ListTimeProfileObj, w_filename, se2_coor) for w_filename in FilenameList]
+
+
+
+
+##################################################################################################################################
+
+start_time = time.time()
+
+##########################################
+ThickVal = "025"
+thickness = float(ThickVal)*1.001
+
+InFolder = "TEAR22_TPV3_T0_P3_025x025_A18phi65_Delta1.001_7s"
+
+
+fname = "step-{timestep:04}_wavefield.pbin"
+NameWrapper = "{}/".format(InFolder)
+path = "/import/freenas-m-03-geodynamics/jhayek/TEAR/Results/T2/Runs/{}".format(NameWrapper)
+
+TimeStepList = GetListPatternFiles(path,fname,"{timestep:04}")
+
+
+freq = int(TimeStepList[1])-int(TimeStepList[0])
+maxtimestep = int(TimeStepList[-1]) 
+
+OutputFolder = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/PaperData/ReceiverData/" + GetTodayDate() + "/"
+
+OutFileName = "Receivers_{InFolder}_{timestep}_d{d}.pickle".format(InFolder=InFolder, timestep = maxtimestep, d = thickness)
+
+#############################
+
+print("\n>>START: "+OutFileName+"\n")
+
+# Locations
+Locations = [[0,thickness],[2000,thickness],[4000,thickness],[6000,thickness],[8000,thickness],
+             [0,25],[2000,25],[4000,25],[6000,25],[8000,25],
+             [0,50],[2000,50],[4000,50],[6000,50],[8000,50],
+             [0,100],[2000,100],[4000,100],[6000,100],[8000,100],
+             [0,200],[2000,200],[4000,200],[6000,200],[8000,200],
+             [0,300],[2000,300],[4000,300],[6000,300],[8000,300],
+             [0,400],[2000,400],[4000,400],[6000,400],[8000,400],
+             [0,500],[2000,500],[4000,500],[6000,500],[8000,500],
+            ]
+
+
+ListTimeProfileObj = [SingleTimeProfile(Loc) for Loc in Locations]
+FillObjectInTime(ListTimeProfileObj, freq, maxtimestep, fname, path)
+
+SavePickleFile(OutputFolder, OutFileName, ListTimeProfileObj)
+print("--- %s seconds ---" % (time.time() - start_time))

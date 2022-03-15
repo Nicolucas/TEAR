@@ -22,8 +22,8 @@ def ExtractFieldsPerTS(ListTimeProfileObj, w_filename, se2_coor):
     SplineVel = [RectBivariateSpline(LCoorX[:,0], LCoorY[0,:], LFieldvelX, kx=1, ky=1), 
                     RectBivariateSpline(LCoorX[:,0], LCoorY[0,:], LFieldvelY, kx=1, ky=1)]
     for OBJitem in ListTimeProfileObj:
-        CompDispX,CompDispY = GetOnlyLocData(OBJitem.Coord, SplineDispl, True)
-        CompvelX,CompVelY = GetOnlyLocData(OBJitem.Coord, SplineVel, True)
+        CompDispX,CompDispY = GetLocData(OBJitem.Coord, SplineDispl, True)
+        CompvelX,CompVelY = GetLocData(OBJitem.Coord, SplineVel, True)
         OBJitem.appendFieldValues(TimeStep, CompDispX, CompDispY, CompvelX, CompVelY)
  
 def FillObjectInTime(ListTimeProfileObj, freq, maxtimestep, fname, path, MeshFilename = "default_mesh_coor.pbin"):
@@ -39,9 +39,9 @@ def FillObjectInTime(ListTimeProfileObj, freq, maxtimestep, fname, path, MeshFil
 
 start_time = time.time()
 
-freq = 1
-maxtimestep =  901
-thickness = 150.15
+freq = 10
+maxtimestep = 4090 
+thickness = 100.1
 
 fname = "step-{timestep:04}_wavefield.pbin"
 #path = "/home/nico/Documents/TEAR/Codes_TEAR/plot-utils_se2wave/se2wave/"
@@ -51,8 +51,7 @@ OutputFolder = "/home/nico/Documents/TEAR/Codes_TEAR/ProfilePicking/Output/" + G
 OutputFolder = "/home/nico/Documents/TEAR/Codes_TEAR/ProfilePicking/[TPV3]Results/" + GetTodayDate() + "/"
 
 
-#Locations = [[8000,thickness],[6000,thickness],[4000,thickness],[2000,thickness],[0,thickness]]
-Locations = [[12000,-3000], [12000,3000], [3000,thickness], [6000,thickness]]
+Locations = [[8000,thickness],[6000,thickness],[4000,thickness],[2000,thickness],[0,thickness]]
 
 ListTimeProfileObj = [SingleTimeProfile(Loc) for Loc in Locations]
 FillObjectInTime(ListTimeProfileObj, freq, maxtimestep, fname, path)

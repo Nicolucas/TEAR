@@ -50,6 +50,7 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+<<<<<<< HEAD
 
 
 
@@ -72,3 +73,8 @@ Bimat/
 Output/
 __pycache__/
 *.ipynb_checkpoints/
+=======
+PythonCodes/LibFolder/__pycache__/
+PythonCodes/.vscode/settings.json
+*.pyc
+>>>>>>> 2f0d2982317696e61ffcb3843d51096054feef64
