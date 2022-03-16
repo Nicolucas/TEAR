@@ -33,37 +33,32 @@ cmapProf = ListedColormap(LineColor.mpl_colors[:])
 ###################################################################
 ###################### Reference solution
 ###################################################################
-path = "/home/nico/Documents/TEAR/Codes_TEAR/ProfilePicking/Output/"
+pathRef = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/PaperData/References/feik/"
 # Reference saved into a list of objects
-RefList = [SSCreference(path + "Reference/sem2dpack/sem2d-{}-0.txt", "0km"),
-           SSCreference(path + "Reference/sem2dpack/sem2d-{}-1.txt", "2km"),
-           SSCreference(path + "Reference/sem2dpack/sem2d-{}-2.txt", "4km"),
-           SSCreference(path + "Reference/sem2dpack/sem2d-{}-3.txt", "6km"),
-           SSCreference(path + "Reference/sem2dpack/sem2d-{}-4.txt", "8km"),
+RefList = [SSCreference(pathRef + "Kos_sem2dpack-{}-receiver-0.txt", "0km"),
+           SSCreference(pathRef + "Kos_sem2dpack-{}-receiver-1.txt", "2km"),
+           SSCreference(pathRef + "Kos_sem2dpack-{}-receiver-2.txt", "4km"),
+           SSCreference(pathRef + "Kos_sem2dpack-{}-receiver-3.txt", "6km"),
+           SSCreference(pathRef + "Kos_sem2dpack-{}-receiver-4.txt", "8km"),
           ]
-
-pathTPV = "/home/nico/Documents/TEAR/Codes_TEAR/ProfilePicking/[TPV3]Results/"
-
 # Reference saved into a list of objects
-
-RefListTPV =  [TPV3reference(pathTPV + "Reference/sem2dpack/[TPV3]sem2dpack-{}-receiver-0.0e+00.txt", "0km"),
-               TPV3reference(pathTPV + "Reference/sem2dpack/[TPV3]sem2dpack-{}-receiver-2.0e+03.txt", "2km"),
-               TPV3reference(pathTPV + "Reference/sem2dpack/[TPV3]sem2dpack-{}-receiver-4.0e+03.txt", "4km"),
-               TPV3reference(pathTPV + "Reference/sem2dpack/[TPV3]sem2dpack-{}-receiver-6.0e+03.txt", "6km"),
-               TPV3reference(pathTPV + "Reference/sem2dpack/[TPV3]sem2dpack-{}-receiver-8.0e+03.txt", "8km"),
+RefListTPV =  [TPV3reference(pathRef + "[TPV3]sem2dpack-{}-receiver-0.0e+00.txt", "0km"),
+               TPV3reference(pathRef + "[TPV3]sem2dpack-{}-receiver-2.0e+03.txt", "2km"),
+               TPV3reference(pathRef + "[TPV3]sem2dpack-{}-receiver-4.0e+03.txt", "4km"),
+               TPV3reference(pathRef + "[TPV3]sem2dpack-{}-receiver-6.0e+03.txt", "6km"),
+               TPV3reference(pathRef + "[TPV3]sem2dpack-{}-receiver-8.0e+03.txt", "8km"),
               ]
 ###################################################################
 ###################### Reference solution
 ###################################################################
-
 # Figure 4
 
 start_time = time.time()
 fname = "step-{timestep:04}_wavefield.pbin"
-path = "/home/nico/Documents/Documents/SharedWolfel/PaperData/220120FieldData/TEAR18_Kos_Sig_P3_025x025_A12phi65_Delta2.501/"
+path = "/import/freenas-m-03-geodynamics/jhayek/TEAR/Results/T2/Runs/TEAR35_Kos_T0_P3_025x025_A12phi65_Delta1.001_4s/"
 
 
-i=8180
+i=4630
 FieldFilename = os.path.join(path,fname.format(timestep=i))
 
 MeshFilename = os.path.join(path, "default_mesh_coor.pbin")
@@ -76,9 +71,9 @@ l = [i.replace(os.path.join(path,'step-'),'').replace('_wavefield.pbin','') for 
 
 TimeStepVal, LCoorX, LCoorY, LFieldX, LFieldY, LFieldvelX, LFieldvelY =  ExtractFields(FieldFilename, se2_coor)
 
-FolderTiltedPath = "/home/nico/Documents/Documents/SharedWolfel/PaperData/ConvTPV/Sigmoid-20220124/"
-DataProfile = LoadPickleFile(Filename = "TEAR18_Kos_Sig_P3_025x025_A12phi65_Delta2.501-25x25-P3-62.525",FolderPath = FolderTiltedPath)
-StressFromPickle = LoadPickleFile("/home/nico/Documents/Documents/SharedWolfel/PaperData/220120FieldData/TEAR18_Kos_Sig_P3_025x025_A12phi65_Delta2.501/Out/", "StressInAPickle")
+FolderProfilesPath = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/PaperData/CorrectedSimulations/20220315/"
+DataProfile = LoadPickleFile(Filename = "TEAR18_Kos_Sig_P3_025x025_A12phi65_Delta2.501-25x25-P3-62.525",FolderPath = FolderProfilesPath)
+StressFromPickle = LoadPickleFile(path+"/Out/", "StressInAPickle")
 
 DataProfile.reverse()
 
@@ -104,9 +99,11 @@ ax[0].set_xlabel("time [s]")
 
 
 
-Format_LabelsOnFig_formatAxis(F1, ax[:2],inverted=True, ncols = 3)
+Format_LabelsOnFig_formatAxis(F1, ax[:2],inverted=True, ncols = 3, HeightBbox=1.2)
 
 LabelizeAxisList(ax,Pos=[0.9, 0.9],fontsize=BIGGER_SIZE)
 
-OutFile = "/home/nico/Documents/Documents/SharedWolfel/Works/se2dr_Paper/Illustrations/FinalFigures/F{}.pdf"
+# OutFile = "/home/nico/Documents/Documents/SharedWolfel/Works/se2dr_Paper/Illustrations/FinalFigures/F{}.pdf"
+# F1.savefig(OutFile.format("4"))
+OutFile = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/Works/se2dr_Paper/Illustrations/FinalFigures/F{}.png"
 F1.savefig(OutFile.format("4"))

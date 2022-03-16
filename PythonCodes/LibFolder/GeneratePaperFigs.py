@@ -704,6 +704,7 @@ def Format_LabelsOnFig_formatAxis(fig, AxesList,inverted=False, ncols=5,ncolSim=
     
     
     AxReference = kwargs.pop("AxLabelLocRef", AxesList[1])
+    Height_Bbox = kwargs.pop("HeightBbox", 1.1)
     
     Lines = list(flip(Lines, ncols))
     ReceiverLabelLines = list(flip(ReceiversLabelList, ncols))
@@ -711,7 +712,7 @@ def Format_LabelsOnFig_formatAxis(fig, AxesList,inverted=False, ncols=5,ncolSim=
                                 ReceiverLabelLines,   # The labels for each line
                                 loc='upper right',   # Position of legend
                                 borderaxespad=0.1,    # Small spacing around legend box
-                                ncol = ncols,  bbox_to_anchor=(1.0, 1.1),**kwargs
+                                ncol = ncols,  bbox_to_anchor=(1.0, Height_Bbox),**kwargs
                                 )
 
     fig.add_artist(ReceiverArtist)
@@ -727,7 +728,7 @@ def Format_LabelsOnFig_formatAxis(fig, AxesList,inverted=False, ncols=5,ncolSim=
                                   ["SEM2DPACK","se2dr"],   # The labels for each line
                                   loc='upper left',   # Position of legend
                                   borderaxespad=0.1,    # Small spacing around legend box
-                                  ncol = ncolSim, bbox_to_anchor=(0.0, 1.1)
+                                  ncol = ncolSim, bbox_to_anchor=(0.0, Height_Bbox)
                                   )
 
     fig.add_artist(SimulationArtist)
