@@ -33,20 +33,20 @@ cmapProf = ListedColormap(LineColor.mpl_colors[:])
 ###################################################################
 ###################### Reference solution
 ###################################################################
-pathRef = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/PaperData/References/feik/"
+pathRef = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/PaperData/References/"
 # Reference saved into a list of objects
-RefList = [SSCreference(pathRef + "Kos_sem2dpack-{}-receiver-0.txt", "0km"),
-           SSCreference(pathRef + "Kos_sem2dpack-{}-receiver-1.txt", "2km"),
-           SSCreference(pathRef + "Kos_sem2dpack-{}-receiver-2.txt", "4km"),
-           SSCreference(pathRef + "Kos_sem2dpack-{}-receiver-3.txt", "6km"),
-           SSCreference(pathRef + "Kos_sem2dpack-{}-receiver-4.txt", "8km"),
+RefList = [SSCreference(pathRef + "Kostrov/Kos_sem2dpack-{}-receiver-0.txt", "0km"),
+           SSCreference(pathRef + "Kostrov/Kos_sem2dpack-{}-receiver-1.txt", "2km"),
+           SSCreference(pathRef + "Kostrov/Kos_sem2dpack-{}-receiver-2.txt", "4km"),
+           SSCreference(pathRef + "Kostrov/Kos_sem2dpack-{}-receiver-3.txt", "6km"),
+           SSCreference(pathRef + "Kostrov/Kos_sem2dpack-{}-receiver-4.txt", "8km"),
           ]
 # Reference saved into a list of objects
-RefListTPV =  [TPV3reference(pathRef + "[TPV3]sem2dpack-{}-receiver-0.0e+00.txt", "0km"),
-               TPV3reference(pathRef + "[TPV3]sem2dpack-{}-receiver-2.0e+03.txt", "2km"),
-               TPV3reference(pathRef + "[TPV3]sem2dpack-{}-receiver-4.0e+03.txt", "4km"),
-               TPV3reference(pathRef + "[TPV3]sem2dpack-{}-receiver-6.0e+03.txt", "6km"),
-               TPV3reference(pathRef + "[TPV3]sem2dpack-{}-receiver-8.0e+03.txt", "8km"),
+RefListTPV =  [TPV3reference(pathRef + "TPV3/TPV_sem2dpack-{}-receiver-0.0e+00.txt", "0km"),
+               TPV3reference(pathRef + "TPV3/TPV_sem2dpack-{}-receiver-2.0e+03.txt", "2km"),
+               TPV3reference(pathRef + "TPV3/TPV_sem2dpack-{}-receiver-4.0e+03.txt", "4km"),
+               TPV3reference(pathRef + "TPV3/TPV_sem2dpack-{}-receiver-6.0e+03.txt", "6km"),
+               TPV3reference(pathRef + "TPV3/TPV_sem2dpack-{}-receiver-8.0e+03.txt", "8km"),
               ]
 ###################################################################
 ###################### Reference solution
