@@ -87,7 +87,7 @@ StressFromPickle = LoadPickleFile(path+"/Out/", "StressInAPickle")
 F1, ax = PlotFullSetup(LCoorX, LCoorY, LFieldX, LFieldvelX, StressFromPickle, 
            ["X-Component Displacement ", "X-Component Displacement [m]"],
            TimeStepVal,[8000-200,8000+200,-200,200],
-            cmap=cmap)
+            cmap=cmap, rasterized=True)
 
 # Tilted case plotting
 iidx = 0
@@ -117,7 +117,9 @@ ax[2].set_ylabel("$y$")
 
 LabelizeAxisList(ax,Pos=[0.9, 0.9],fontsize=BIGGER_SIZE)
 
-# OutFile = "/home/nico/Documents/Documents/SharedWolfel/Works/se2dr_Paper/Illustrations/FinalFigures/F{}.pdf"
-# F1.savefig(OutFile.format("5"))
+
+print("Saving Figure...")
+OutFile = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/Works/se2dr_Paper/Illustrations/FinalFigures/F{}.pdf"
+F1.savefig(OutFile.format("5"))
 OutFile = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/Works/se2dr_Paper/Illustrations/FinalFigures/F{}.png"
 F1.savefig(OutFile.format("5"))

@@ -50,7 +50,7 @@ start_time = time.time()
 ThickVal = "025"
 thickness = float(ThickVal)*1.001
 
-InFolder = "TEAR22_TPV3_T0_P3_025x025_A18phi65_Delta1.001_7s"
+InFolder = "TEAR49_TPV_T0_P3_025x025_A12phi65_Delt1.001_7s"
 
 
 fname = "step-{timestep:04}_wavefield.pbin"
@@ -72,7 +72,7 @@ OutFileName = "Receivers_{InFolder}_{timestep}_d{d}.pickle".format(InFolder=InFo
 print("\n>>START: "+OutFileName+"\n")
 
 # Locations
-Locations = [[0,thickness],[2000,thickness],[4000,thickness],[6000,thickness],[8000,thickness],
+Locations = [[0,thickness/2.0],[2000,thickness/2.0],[4000,thickness/2.0],[6000,thickness/2.0],[8000,thickness/2.0],
              [0,25],[2000,25],[4000,25],[6000,25],[8000,25],
              [0,50],[2000,50],[4000,50],[6000,50],[8000,50],
              [0,100],[2000,100],[4000,100],[6000,100],[8000,100],

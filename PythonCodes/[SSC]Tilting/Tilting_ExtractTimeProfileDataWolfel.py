@@ -44,13 +44,12 @@ def FillObjectInTime(ListTimeProfileObj, freq, maxtimestep, fname, path, TiltAng
 start_time = time.time()
 
 ##########################################
-ThickVal = "100"
+ThickVal = "025"
 TiltAngle = 0.00
-OrderP = 1
+OrderP = 3
 thickness = float(ThickVal)*1.001
 
-InFolder = "TEAR35_TPV_T0_P1_100x100_A18phi65_Delta1.001_3s"
-
+InFolder = "TEAR48_TPV_T0_P3_025x025_A12phi65_Delt1.001_7s"
 
 fname = "step-{timestep:04}_wavefield.pbin"
 NameWrapper = "{}/".format(InFolder)

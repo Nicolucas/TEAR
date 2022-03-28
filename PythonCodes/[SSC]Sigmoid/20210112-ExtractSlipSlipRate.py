@@ -8,12 +8,12 @@ from Lib_SigmoidProcessing import *
 LocOfInterest = [0, 2000,4000,6000,8000]
 
 dim = 25
-Thickness = dim*2.0
+Thickness = dim*2.5
 
 NumPoints = 1200001
 xx = np.linspace(-1.e4, 1.e4, NumPoints)
 
-UniFolder = "TEAR35_Kos_Sig_P3_025x025_A12phi65_Delta2_4s"
+UniFolder = "TEAR48_Kos_Sig_P3_025x025_A12phi65_Delta2.5_4s"
 fname = "step-{timestep:04}_wavefield.pbin"
 
 path = "/import/freenas-m-03-geodynamics/jhayek/TEAR/Results/T2/Runs/{}/".format(UniFolder)

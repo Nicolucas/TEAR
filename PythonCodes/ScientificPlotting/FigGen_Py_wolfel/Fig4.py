@@ -55,7 +55,7 @@ RefListTPV =  [TPV3reference(pathRef + "TPV3/TPV_sem2dpack-{}-receiver-0.0e+00.t
 
 start_time = time.time()
 fname = "step-{timestep:04}_wavefield.pbin"
-path = "/import/freenas-m-03-geodynamics/jhayek/TEAR/Results/T2/Runs/TEAR35_Kos_Sig_P3_025x025_A12phi65_Delta2_4s/"
+path = "/import/freenas-m-03-geodynamics/jhayek/TEAR/Results/T2/Runs/TEAR48_Kos_Sig_P3_025x025_A12phi65_Delta2.5_4s/"
 
 
 i=4630
@@ -71,8 +71,8 @@ l = [i.replace(os.path.join(path,'step-'),'').replace('_wavefield.pbin','') for 
 
 TimeStepVal, LCoorX, LCoorY, LFieldX, LFieldY, LFieldvelX, LFieldvelY =  ExtractFields(FieldFilename, se2_coor)
 
-FolderProfilesPath = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/PaperData/CorrectedSimulations/Sigmoid-20220315/"
-DataProfile = LoadPickleFile(Filename = "TEAR35_Kos_Sig_P3_025x025_A12phi65_Delta2_4s-25x25-P3-50.0",FolderPath = FolderProfilesPath)
+FolderProfilesPath = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/PaperData/CorrectedSimulations/Sigmoid-20220327/"
+DataProfile = LoadPickleFile(Filename = "TEAR48_Kos_Sig_P3_025x025_A12phi65_Delta2.5_4s-25x25-P3-62.5",FolderPath = FolderProfilesPath)
 StressFromPickle = LoadPickleFile(path+"/Out/", "StressInAPickle")
 
 DataProfile.reverse()
@@ -82,7 +82,7 @@ InsetAxis = [x0-200,x0+200,y0-200,y0+200]
 
 F1, ax = PlotF4Setup(LCoorX, LCoorY, LFieldvelX, StressFromPickle,  
            ["X-Component Displacement ", "X-Component Displacement [m]"],
-           TimeStepVal,InsetAxis,cmap=cmap)
+           TimeStepVal,InsetAxis,cmap=cmap, rasterized=True)
 del x0,y0,InsetAxis
 # Tilted case plotting
 iidx = 0
@@ -103,7 +103,8 @@ Format_LabelsOnFig_formatAxis(F1, ax[:2],inverted=True, ncols = 3, HeightBbox=1.
 
 LabelizeAxisList(ax,Pos=[0.9, 0.9],fontsize=BIGGER_SIZE)
 
-# OutFile = "/home/nico/Documents/Documents/SharedWolfel/Works/se2dr_Paper/Illustrations/FinalFigures/F{}.pdf"
-# F1.savefig(OutFile.format("4"))
+print("Saving Figure...")
+OutFile = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/Works/se2dr_Paper/Illustrations/FinalFigures/F{}.pdf"
+F1.savefig(OutFile.format("4"))
 OutFile = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/Works/se2dr_Paper/Illustrations/FinalFigures/F{}.png"
 F1.savefig(OutFile.format("4"))

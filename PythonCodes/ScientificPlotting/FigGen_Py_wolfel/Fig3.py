@@ -57,7 +57,7 @@ RefListTPV =  [TPV3reference(pathRef + "TPV3/TPV_sem2dpack-{}-receiver-0.0e+00.t
 
 start_time = time.time()
 fname = "step-{timestep:04}_wavefield.pbin"
-path = "/import/freenas-m-03-geodynamics/jhayek/TEAR/Results/T2/Runs/TEAR35_Kos_T20_P3_025x025_A12phi65_Delta2_4s/"
+path = "/import/freenas-m-03-geodynamics/jhayek/TEAR/Results/T2/Runs/TEAR46_Kos_T20_P3_025x025_A12phi65_Delta2.5_4s/"
 
 
 i=4630
@@ -73,15 +73,15 @@ l = [i.replace(os.path.join(path,'step-'),'').replace('_wavefield.pbin','') for 
 TimeStepVal, LCoorX, LCoorY, LFieldX, LFieldY, LFieldvelX, LFieldvelY =  ExtractFields(FieldFilename, se2_coor)
 
 
-FolderProfilesPath = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/PaperData/CorrectedSimulations/20220315/"
-DataProfile = LoadPickleFile(Filename = "TEAR35_Kos_T20_P3_025x025_A12phi65_Delta2_4s-Tilt20.0-P3-TPList_t4630_d50.0.pickle",FolderPath = FolderProfilesPath)
+FolderProfilesPath = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/PaperData/CorrectedSimulations/20220325/"
+DataProfile = LoadPickleFile(Filename = "TEAR46_Kos_T20_P3_025x025_A12phi65_Delta2.5_4s-Tilt20.0-P3-TPList_t4630_d62.5.pickle",FolderPath = FolderProfilesPath)
 
 x0,y0 = 7350,2675
 InsetAxis = [x0-200,x0+200,y0-200,y0+200]
 F1, ax = Plot4KomaSetup(LCoorX, LCoorY, LFieldX, LFieldvelX, 
            ["X-Component Displacement ", "X-Component Displacement [m]"],
            TimeStepVal,InsetAxis,
-            cmap=cmap)
+            cmap=cmap, rasterized=True)
 del x0,y0,InsetAxis
 
 
@@ -104,8 +104,8 @@ Format_LabelsOnFig_formatAxis(F1, ax[:2],inverted=True, ncols = 3, HeightBbox=1.
 
 LabelizeAxisList(ax,Pos=[0.9, 0.9],fontsize=BIGGER_SIZE)
 
-
-# OutFile = "/home/nico/Documents/Documents/SharedWolfel/Works/se2dr_Paper/Illustrations/FinalFigures/F{}.pdf"
-# F1.savefig(OutFile.format("3"))
+print("Saving Figure...")
+OutFile = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/Works/se2dr_Paper/Illustrations/FinalFigures/F{}.pdf"
+F1.savefig(OutFile.format("3"))
 OutFile = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/Works/se2dr_Paper/Illustrations/FinalFigures/F{}.png"
 F1.savefig(OutFile.format("3"))

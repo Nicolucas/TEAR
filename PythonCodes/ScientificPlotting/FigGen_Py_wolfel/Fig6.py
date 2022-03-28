@@ -232,11 +232,16 @@ def PlotVelSweepX2(fname,path,Frames,PathPost,ZoomIn,VMaxMin=None,**kwargs):
 
 start_time = time.time()
 fname = "step-{timestep:04}_wavefield.pbin"
-path = "/import/freenas-m-03-geodynamics/jhayek/TEAR/Results/T2/Runs/TEAR35_TPV_T20_P3_025x025_A12phi65_Delta{}_3s/"
+path = "/import/freenas-m-03-geodynamics/jhayek/TEAR/Results/T2/Runs/TEAR46_TPV_T20_P3_025x025_A12phi65_Delta{}_2s_NC/"
 
-PathPost = ['1.0','1.43','4.00'];Frames = [ 50, 600, 2300];ZoomIn = [2000,3400,7000];
 
-F1 = PlotVelSweep(fname,path,Frames,PathPost,ZoomIn,VMaxMin=[0.1,1.5,2],cmap=cmap)
+PathPost = ['1.0','1.43','3.00'];Frames = [ 60, 600, 2250];ZoomIn = [2000,3400,7000];
 
+F1 = PlotVelSweep(fname,path,Frames,PathPost,ZoomIn,VMaxMin=[0.1,1.5,2],cmap=cmap, rasterized=True)
+
+
+print("Saving Figure...")
+OutFile = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/Works/se2dr_Paper/Illustrations/FinalFigures/F{}.pdf"
+F1.savefig(OutFile.format("6"))
 OutFile = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/Works/se2dr_Paper/Illustrations/FinalFigures/F{}.png"
 F1.savefig(OutFile.format("6"))
