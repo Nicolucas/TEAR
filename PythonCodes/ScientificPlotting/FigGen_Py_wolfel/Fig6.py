@@ -154,6 +154,8 @@ def PlotVelSweep(fname,path,Frames,PathPost,ZoomIn, VMaxMin=None,**kwargs):
     
     ConnectAxis[0].set_xlabel("$x$ [m]")
     Ax4xLabel[0].set_xlabel("$x$ [m]")
+
+    return fig
         
 def PlotVelSweepX2(fname,path,Frames,PathPost,ZoomIn,VMaxMin=None,**kwargs):  
 
@@ -225,11 +227,16 @@ def PlotVelSweepX2(fname,path,Frames,PathPost,ZoomIn,VMaxMin=None,**kwargs):
         ax0_10.set_ylim([-ZoomIn[i],ZoomIn[i]])
         ax0_00.set_ylim([-ZoomIn[i],ZoomIn[i]])
 
+    return fig
+
 
 start_time = time.time()
 fname = "step-{timestep:04}_wavefield.pbin"
-path = "/home/nico/Documents/Documents/SharedWolfel/PaperData/220120FieldData/TEAR15_TPV3_T20_P3_025x025_A12phi65_Delta{}1/"
+path = "/import/freenas-m-03-geodynamics/jhayek/TEAR/Results/T2/Runs/TEAR35_TPV_T20_P3_025x025_A12phi65_Delta{}_3s/"
 
-PathPost = ['1.00','1.43','4.00'];Frames = [ 100, 1000, 4000];ZoomIn = [2000,3400,7000];
+PathPost = ['1.0','1.43','4.00'];Frames = [ 50, 600, 2300];ZoomIn = [2000,3400,7000];
 
-PlotVelSweep(fname,path,Frames,PathPost,ZoomIn,VMaxMin=[0.1,1.5,2],cmap=cmap)
+F1 = PlotVelSweep(fname,path,Frames,PathPost,ZoomIn,VMaxMin=[0.1,1.5,2],cmap=cmap)
+
+OutFile = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/Works/se2dr_Paper/Illustrations/FinalFigures/F{}.png"
+F1.savefig(OutFile.format("6"))
