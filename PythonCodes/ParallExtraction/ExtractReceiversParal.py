@@ -4,7 +4,6 @@ from scipy.interpolate import RectBivariateSpline
 from functools import partial
 import copy
 import multiprocessing as mp
-from tqdm import tqdm
 
 sys.path.insert(0,"/import/freenas-m-03-geodynamics/jhayek/petsc-3.12.5/lib/petsc/bin/")
 sys.path.insert(0,"/import/freenas-m-03-geodynamics/jhayek/TEAR/se2wave/utils/python")
