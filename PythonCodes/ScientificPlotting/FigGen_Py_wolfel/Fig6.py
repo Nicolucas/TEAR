@@ -232,10 +232,10 @@ def PlotVelSweepX2(fname,path,Frames,PathPost,ZoomIn,VMaxMin=None,**kwargs):
 
 start_time = time.time()
 fname = "step-{timestep:04}_wavefield.pbin"
-path = "/import/freenas-m-03-geodynamics/jhayek/TEAR/Results/T2/Runs/TEAR46_TPV_T20_P3_025x025_A12phi65_Delta{}_2s_NC/"
+path = "/import/freenas-m-03-geodynamics/jhayek/TEAR/Results/T2/Runs/TEAR51_TPV_T20_P3_025x025_A12phi65_Delta{}_2s/"
 
 
-PathPost = ['1.0','1.43','3.00'];Frames = [ 60, 600, 2250];ZoomIn = [2000,3400,7000];
+PathPost = ['1.0','1.43','4.00'];Frames = [ 60, 600, 2250]; ZoomIn = [2000,3400,7000];
 
 F1 = PlotVelSweep(fname,path,Frames,PathPost,ZoomIn,VMaxMin=[0.1,1.5,2],cmap=cmap, rasterized=True)
 

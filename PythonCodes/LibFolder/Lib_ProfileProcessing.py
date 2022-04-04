@@ -100,6 +100,14 @@ class SingleTimeProfile:
         self.DispY.append(dispy)
         self.VelX.append(velx)
         self.VelY.append(vely)
+
+    def AssimilateSingleTimeProfile(self, AnotherSTP_obj):
+        self.Time.extend( AnotherSTP_obj.Time)
+        self.DispX.extend(AnotherSTP_obj.DispX)
+        self.DispY.extend(AnotherSTP_obj.DispY)
+        self.VelX.extend( AnotherSTP_obj.VelX)
+        self.VelY.extend( AnotherSTP_obj.VelY)
+
     
     def PrintValues(self):
         print("Coordinate:")

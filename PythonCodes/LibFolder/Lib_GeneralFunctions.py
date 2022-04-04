@@ -1,4 +1,4 @@
-import os
+import os,sys
 from glob import glob
 import pickle, datetime
 import matplotlib.pyplot as plt 
@@ -55,3 +55,13 @@ def GetListPatternFiles(path,fname,ToFormat):
     list_ = [int(i.replace(PathNFile_.split('*')[0],'').replace(PathNFile_.split('*')[1],'')) for i in FileList_]
 
     return sorted(list_)
+
+
+def Progress(filenum,TotalfileNum,location):
+    """
+    Prints the progress of an iteration in the format and a concatenated string:
+    filenum / TotalfileNum - location
+    """
+    sys.stdout.write('\033[2K\033[1G')
+    sys.stdout.write("\t{} / {} - ".format(filenum+1,TotalfileNum) + str(location))
+    sys.stdout.flush()

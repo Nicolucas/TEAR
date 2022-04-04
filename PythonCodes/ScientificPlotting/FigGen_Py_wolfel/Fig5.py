@@ -63,10 +63,10 @@ RefListTPV =  [TPV3reference(pathRef + "TPV3/TPV_sem2dpack-{}-receiver-0.0e+00.t
 
 start_time = time.time()
 fname = "step-{timestep:04}_wavefield.pbin"
-path = "/import/freenas-m-03-geodynamics/jhayek/TEAR/Results/T2/Runs/TEAR35_TPV_T0_P3_025x025_A12phi65_Delta1.001_3s/"
+path = "/import/freenas-m-03-geodynamics/jhayek/TEAR/Results/T2/Runs/TEAR46_TPV_T0_P3_025x025_A12phi65_Delta1.001_3s/"
 
 
-i=4630
+i=5210
 FieldFilename = os.path.join(path,fname.format(timestep=i))
 
 MeshFilename = os.path.join(path, "default_mesh_coor.pbin")
@@ -80,13 +80,13 @@ l = [i.replace(os.path.join(path,'step-'),'').replace('_wavefield.pbin','') for 
 TimeStepVal, LCoorX, LCoorY, LFieldX, LFieldY, LFieldvelX, LFieldvelY =  ExtractFields(FieldFilename, se2_coor)
 
 
-FolderProfilesPath = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/PaperData/CorrectedSimulations/20220120/"
-Profile2Plot = LoadPickleFile(Filename = "TEAR14_Kos_T0_P3_025x025_A12phi65_5Sec-Tilt0.0-P3-TPList_t9990_d25.025.pickle",FolderPath = FolderProfilesPath)
+FolderProfilesPath = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/PaperData/CorrectedSimulations/20220330/"
+Profile2Plot = LoadPickleFile(Filename = "TEAR48_TPV_T0_P3_025x025_A12phi65_Delt1.001_7s-Tilt0.0-P3-TPList_t10150_d25.025.pickle",FolderPath = FolderProfilesPath)
 StressFromPickle = LoadPickleFile(path+"/Out/", "StressInAPickle")
 
 F1, ax = PlotFullSetup(LCoorX, LCoorY, LFieldX, LFieldvelX, StressFromPickle, 
            ["X-Component Displacement ", "X-Component Displacement [m]"],
-           TimeStepVal,[8000-200,8000+200,-200,200],
+           TimeStepVal,[8700-200,8700+200,-200,200],
             cmap=cmap, rasterized=True)
 
 # Tilted case plotting
@@ -98,13 +98,18 @@ for iidx,Test1 in enumerate(Profile2Plot):
 LabelsPerColor= ["25x25 - P3 - $\delta$50."]
 
 #F1.suptitle("Mesh-aligned Kostrov simulation")
-[item.PlotReference(ax[0], "Slip", filtering=False) for item in RefList]
-[item.PlotReference(ax[1], "SlipRate", filtering=False) for item in RefList]
+[item.PlotReference(ax[0], "Slip", filtering=False) for item in RefListTPV]
+[item.PlotReference(ax[1], "SlipRate", filtering=False) for item in RefListTPV]
 
 Format_LabelsOnFig_formatAxis(F1, ax[:2],inverted=True,ncolSim=2,AxLabelLocRef=ax[2])
 
+
+ax[0].set_xlim(-0.1,5.8)
+ax[1].set_xlim(-0.1,5.8)
+ax[1].set_ylim(-0.5,7)
+
 ############### Ax 2
-GenKostrovCase(ax[2])
+GenTPV3Case(ax[2])
 
 # receivers locations
 for i in [0,1,2,3,4]:
@@ -123,3 +128,5 @@ OutFile = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/Works/se2dr_Pape
 F1.savefig(OutFile.format("5"))
 OutFile = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/Works/se2dr_Paper/Illustrations/FinalFigures/F{}.png"
 F1.savefig(OutFile.format("5"))
+
+

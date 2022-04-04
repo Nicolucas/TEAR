@@ -1,6 +1,7 @@
 import os, time, sys
 import numpy as np
 from scipy.interpolate import RectBivariateSpline
+import multiprocessing as mp
 
 sys.path.insert(0,"/import/freenas-m-03-geodynamics/jhayek/petsc-3.12.5/lib/petsc/bin/")
 sys.path.insert(0,"/import/freenas-m-03-geodynamics/jhayek/TEAR/se2wave/utils/python")
@@ -30,14 +31,24 @@ def ExtractFieldsPerTS_tilting(ListTimeProfileObj, w_filename, se2_coor,TiltAngl
         CompvelX,CompVelY = GetLocDataTilt(OBJitem.Coord,OBJitem.TwinCoord, SplineVel,  True)
         OBJitem.appendFieldValues(TimeStep, CompDispX, CompDispY, CompvelX, CompVelY)
  
-def FillObjectInTime(ListTimeProfileObj, freq, maxtimestep, fname, path, TiltAngle, MeshFilename = "default_mesh_coor.pbin"):
+
+
+
+def FillObjectInTime(ListTimeProfileObj, freq, maxtimestep, fname, path, TiltAngle, MeshFilename = "default_mesh_coor.pbin", NumProcessors=1):
     TSList = np.arange(0, maxtimestep+1, freq).tolist()
     FilenameList = [os.path.join(path,fname.format(timestep=i)) for i in TSList]
 
     filename = os.path.join(path, MeshFilename)
     se2_coor = se2wave_load_coordinates(filename)
 
-    [ExtractFieldsPerTS_tilting(ListTimeProfileObj, w_filename, se2_coor,TiltAngle) for w_filename in FilenameList]
+    ParallExtractField_per_TS = lambda lst: [ExtractFieldsPerTS_tilting(ListTimeProfileObj, x, se2_coor, TiltAngle) for x in lst]
+
+    FilenameListChunks = np.array_split(FilenameList, NumProcessors)
+    with mp.Pool(processes=NumProcessors) as pool:
+        chunk_processes = [pool.apply_async(ParallExtractField_per_TS, args=(chunk)) for chunk in FilenameListChunks]
+        
+        [chunk.get() for chunk in chunk_processes]
+
 
 
 
@@ -61,7 +72,7 @@ TimeStepList = GetListPatternFiles(path,fname,"{timestep:04}")
 freq = int(TimeStepList[1])-int(TimeStepList[0])
 maxtimestep = int(TimeStepList[-1]) 
 
-OutputFolder = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/PaperData/CorrectedSimulations/" + GetTodayDate() + "/"
+OutputFolder = "/import/freenas-m-03-geodynamics/jhayek/SharedWolfel/PaperData/CorrectedSimulations/" + GetTodayDate() + "-2/"
 
 OutFileName = "{InFolder}-Tilt{Tilt}-P{order}-TPList_t{timestep}_d{d}.pickle".format(InFolder=InFolder,order=OrderP, Tilt = TiltAngle, timestep = maxtimestep, d = thickness)
 
@@ -77,7 +88,7 @@ Locations = [list(ApplyTilting(TiltAngle,Loc[0],Loc[1])) for Loc in Locations]
 
 ListTimeProfileObj = [SingleTimeProfile(Loc) for Loc in Locations]
 [ListTimeProfileObj[idx].AddTwin(TLoc) for idx,TLoc in enumerate(TwinLocations)]
-FillObjectInTime(ListTimeProfileObj, freq, maxtimestep, fname, path, -TiltAngle)
+FillObjectInTime(ListTimeProfileObj, freq, maxtimestep, fname, path, -TiltAngle, NumProcessors=60)
 
 SavePickleFile(OutputFolder, OutFileName, ListTimeProfileObj)
 print("--- %s seconds ---" % (time.time() - start_time))
